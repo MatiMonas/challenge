@@ -1,6 +1,7 @@
 import { Router} from 'express';
-import characterRoutes from '../routes/characters';
 import testRoutes from '../routes/testRoutes';
+import characterRoutes from '../routes/characters';
+import moviesRoutes from '../routes/movies';
 
 const router = Router()
 /**
@@ -10,7 +11,10 @@ const router = Router()
    *     description: Testing routes to check that everything works fine.
    *   - name: Character Routes
    *     description: Routes to manage characters, CRUD
+   *   - name: Movies Routes
+   *     description: Routes to manage movies, CRUD
    */
   .use('/test', testRoutes)
-  .use('/characters', characterRoutes);
+  .use('/characters', characterRoutes)
+  .use('/movies', moviesRoutes)
 export default router;

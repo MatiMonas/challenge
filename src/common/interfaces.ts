@@ -5,4 +5,15 @@ export interface character  {
   age: number;
   history?: string;
   weight: number;
+  movies: movie[]
+}
+
+export interface movie {
+  id: number;
+  title: string;
+  releaseDate: string;
+  image?: string;
+  rating?: number;
+  characters: character[];
+  genreId: number;
 }

@@ -62,6 +62,11 @@ const router = Router()
    *            history:
    *             type: string
    *             example: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+   *            movies:
+   *             type: array
+   *             items:
+   *              type: integer
+   *              example: 1          
    *     responses:
    *       201:
    *         description: Created
