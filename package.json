@@ -10,7 +10,8 @@
     "test:model:movie": "jest ./tests/models/movies-model.spec.js --watch",
     "test:model:character": "jest ./tests/models/character-model.spec.js --watch",
     "test:model:genre": "jest ./tests/models/genre-model.spec.js --watch",
-    "test:routes": "jest ./tests/routes/test-routes.spec.js --watch --verbose"
+    "test:routes": "jest ./tests/routes/test-routes.spec.js --watch --verbose",
+    "test:routes:character": "jest ./tests/routes/characters-routes.spec.js --watch --verbose"
   },
   "keywords": [],
   "author": "",
@@ -34,8 +35,8 @@
     "pg": "^8.7.3",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.21.3",
-    "swagger-jsdoc": "^6.2.1",
-    "swagger-ui-express": "^4.4.0",
+    "swagger-jsdoc": "^6.1.0",
+    "swagger-ui-express": "^4.3.0",
     "tslib": "^2.4.0"
   }
 }
