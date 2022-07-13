@@ -14,6 +14,10 @@ const swaggerOptions = {
       servers: ['http://localhost:3001'],
     },
   },
+  defaultModelRendering: 'model',
+
+  
+
   apis: [
     path.resolve(__dirname, './routes/index*'),
     path.resolve(__dirname, './routes/**/index*'),
