@@ -10,9 +10,16 @@ const router = Router()
    * @openapi
    * /characters:
    *    get:
-   *     summary: Get all characters
+   *     summary: Get the detail of a character if a query param is passed, else get all characters
    *     tags:
    *       - Character Routes
+   *     parameters:
+   *       - in: query
+   *         name: id
+   *         description: Character id to get the details of a character. Id is not required.
+   *         required: false
+   *         schema:
+   *          type: number 
    *     responses:
    *       200:
    *         description: Return an array of characters with their id, name and image.
@@ -74,7 +81,7 @@ const router = Router()
    *        description: Character id
    *        required: true
    *        schema:
-   *          type: number   *    
+   *          type: number    
    *    responses:
    *      200:
    *        description: Deleted
