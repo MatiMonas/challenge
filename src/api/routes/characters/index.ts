@@ -1,30 +1,27 @@
 import { Router } from 'express';
-import db from '../../db';
-
+import { getCharactersController } from '../../controllers/characters'
 const router = Router()
 
     /**
    * @openapi
    * /characters:
    *   get:
-   *     summary: get all characters
+   *     summary: Get all characters
    *     tags:
-   *       - Characters
+   *       - Character Routes
    *     responses:
    *       200:
-   *         description: Return
+   *         description: Return an array of characters with their id, name and image.
    *         content: {}
    */
-  .get('/', async (req, res) => {
-
-  })
+  .get('/', getCharactersController)
     /**
    * @openapi
    * /characters:
    *    post:
-   *     summary: create a new character
+   *     summary: Creates a new character
    *     tags:
-   *       - Characters
+   *       - Character Routes
    *    requestBody:
    *     content:
    *      application/json:
