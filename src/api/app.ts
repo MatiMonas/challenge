@@ -1,7 +1,6 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-import path from 'path';
 import express from 'express';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
@@ -19,14 +18,11 @@ export const connectToDB = async () => {
   }
 };
 
-const root = path.normalize(`${__dirname}/../..`);
-
 export const server = express();
 
 server.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 server.use(bodyParser.json({ limit: '50mb' }));
 server.use(morgan('dev'));
-server.use(express.static(`${root}/public`));
 
 server.use(
   cors({
