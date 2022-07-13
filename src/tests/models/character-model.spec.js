@@ -1,4 +1,4 @@
-const db = require('../db');
+const db = require('../../db');
 // NO SE ESTA HACIENDO UN MOCK DE LA BD
 
 const sequelize = db.default.sequelize;

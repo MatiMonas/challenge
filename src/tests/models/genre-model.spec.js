@@ -1,6 +1,6 @@
 // NO SE ESTA HACIENDO UN MOCK DE LA BD
 
-const db = require('../db');
+const db = require('../../db');
 
 const sequelize = db.default.sequelize;
 const Genre = db.default.Genres;
