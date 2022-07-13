@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import db from '../../db';
 import { character } from '../../common/interfaces';
 
-const { Character } = db;
+const { Character, Movie } = db;
 
 export async function getCharactersController(
   req: Request,
@@ -11,39 +11,39 @@ export async function getCharactersController(
 ) {
   try {
     let { id } = req.query;
-    let charactersToSend: character[] = [];
 
     id = parseInt(id);
-    console.log(id);
+    if (!id) {
+      const characters = await Character.findAll({
+        attributes: ['id', 'name', 'image'],
+      });
 
-    const condition: { where?: { id?: number }; raw: boolean } = { raw: true };
-    const where: { id?: number } = {};
+      if (!characters.length) {
+        return res.status(404).send({
+          message: 'character/s not found',
+        });
+      }
+      return res.status(200).json(characters);
+    }
 
-    if (id) where.id = id;
-
-    condition.where = where;
-
-    const characters = await Character.findAll(condition);
-    
-    if (!characters.length) {
-      return res.status(404).send({
-        message: 'Character/s not found',
+    if (isNaN(id)) {
+      return res.status(400).send({
+        message: 'id must be a number',
       });
     }
 
-    if (!isNaN(id)) {
-      charactersToSend = characters[0];
-    } else {
-      charactersToSend = characters.map((character: character) => {
-        return {
-          id: character.id,
-          name: character.name,
-          image: character.image,
-        };
-      });
-    }
+    const character = await Character.findByPk(id, {
+      include: [
+        {
+          model: Movie,
+          as: 'movies',
+          attributes: ['id', 'title'],
+          through: { attributes: [] },
+        },
+      ],
+    });
 
-    return res.status(200).json(charactersToSend);
+    return res.status(200).json(character);
   } catch (err) {
     next(err);
   }
@@ -54,23 +54,31 @@ export async function createCharacterController(
   res: Response,
   next: NextFunction,
 ) {
-  try {
-    const { name, age, weight } = req.body;
+  let { name, age, weight, history, image, movieId } = req.body;
 
-    if (!name || !age || !weight) {
-      return res.status(400).send('Missing required parameters');
-    }
-
-    const { dataValues: character } = await Character.create(req.body);
-
-    console.log(character);
-    return res.status(201).json(character);
-  } catch (err) {
-    next(err);
-    return res
-      .status(500)
-      .json({ msg: 'Error creating character', error: err?.message });
+  let moviesIds = movieId?.map((ids: string) =>
+    parseInt(ids) ? parseInt(ids) : false,
+  );
+  if (!name || !age || !weight || !moviesIds[0]) {
+    return res.status(400).send('Missing required parameters');
   }
+
+  Character.create({
+    name,
+    age,
+    weight,
+    history,
+    image,
+  })
+    .then((response: Response) => {
+      return response.addMovies(moviesIds);
+    })
+    .then(() => {
+      return res.status(201).send('character created successfully');
+    })
+    .catch((err) => {
+      next(err);
+    });
 }
 
 export async function deleteCharacterController(

@@ -21,13 +21,13 @@ const Genre = GenreFactory(sequelize);
 
 // Un personaje puede estar en muchas peliculas
 // La pelicula puede tener muchos personajes
-Character.belongsToMany(Movie, { through: 'character_movies' });
-Movie.belongsToMany(Character, { through: 'character_movies' });
+Character.belongsToMany(Movie, { through: 'character_movies' , as: 'movies' });
+Movie.belongsToMany(Character, { through: 'character_movies', as: 'characters' });
 
 // Un genero puede pertenecer a muchas peliculas
 // La pelicula tiene un solo genero
-Genre.hasMany(Movie, { foreignKey: 'genre_id' });
-Movie.belongsTo(Genre);
+Genre.hasMany(Movie, { foreignKey: 'genreId', as : 'movies' });
+Movie.belongsTo(Genre, { foreignKey: 'genreId', as: 'genre' });
 
 export default {  
   ...sequelize.models,
