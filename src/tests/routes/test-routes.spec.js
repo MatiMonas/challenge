@@ -1,7 +1,7 @@
 
 const db = require('../../db');
 const request = require('supertest');
-const {server} = require('../../api/app');
+const {server} = require('../../api');
 const { constants } = require('../../common/utils');
 const sequelize = db.default.sequelize;
 

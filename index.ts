@@ -1,5 +1,5 @@
 import './src/common/env';
-import { server, connectToDB } from './src/api/app';
+import { server, connectToDB } from './src/api';
 
 const port = process.env.PORT || 3001;
 
