@@ -30,6 +30,8 @@ Genre.hasMany(Movie, { foreignKey: 'genre_id' });
 Movie.belongsTo(Genre);
 
 export default {
-  ...sequelize.models,
   sequelize,
+  Character, 
+  Movie, 
+  Genre
 };
