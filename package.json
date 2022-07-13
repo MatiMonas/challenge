@@ -7,9 +7,10 @@
     "start": "node ./dist/index.js",
     "dev": "nodemon",
     "test": "jest --verbose --detectOpenHandles",
-    "test:model:movie": "jest ./tests/movies-model.spec.js --watch",
-    "test:model:character": "jest ./tests/character-model.spec.js --watch",
-    "test:model:genre": "jest ./tests/genre-model.spec.js --watch"
+    "test:model:movie": "jest ./tests/models/movies-model.spec.js --watch",
+    "test:model:character": "jest ./tests/models/character-model.spec.js --watch",
+    "test:model:genre": "jest ./tests/models/genre-model.spec.js --watch",
+    "test:routes": "jest ./tests/routes/test-routes.spec.js --watch --verbose"
   },
   "keywords": [],
   "author": "",
