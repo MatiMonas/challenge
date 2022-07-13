@@ -1,10 +1,8 @@
-import { Router, Request, Response, Next } from 'express';
-import characterRoutes from './characters';
-import testRoutes from './test';
+import { Router} from 'express';
+import characterRoutes from '../routes/characters';
+import testRoutes from '../routes/testRoutes';
 
-const router = Router();
-
-
+const router = Router()
 /**
    * @openapi
    * tags:
@@ -13,7 +11,6 @@ const router = Router();
    *   - name: Character Routes
    *     description: Routes to manage characters
    */
-router.use('/characters', characterRoutes)
-router.get('/test', testRoutes)
-
+  .use('/test', testRoutes)
+  .use('/characters', characterRoutes);
 export default router;
