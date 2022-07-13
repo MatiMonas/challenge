@@ -1,6 +1,3 @@
-import dotenv from 'dotenv';
-dotenv.config();
-
 import express from 'express';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
@@ -8,7 +5,9 @@ import cors from 'cors';
 import { errorHandler } from './middlewares';
 import routes from './routes';
 import db from '../db';
+import swagger from './swagger';
 
+export const server = express();
 const { sequelize } = db;
 
 export const connectToDB = async () => {
@@ -17,8 +16,6 @@ export const connectToDB = async () => {
     await sequelize.sync({ force });
   }
 };
-
-export const server = express();
 
 server.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 server.use(bodyParser.json({ limit: '50mb' }));
@@ -29,5 +26,7 @@ server.use(
     credentials: true,
   }),
 );
+swagger(server);
+
 server.use('/', routes);
 server.use(errorHandler);
