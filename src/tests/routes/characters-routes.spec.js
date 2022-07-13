@@ -9,12 +9,14 @@ const testCharacter1 = {
   image: 'https://sm.ign.com/ign_es/screenshot/default/11112_uq7s.jpg',
   age: 15,
   weight: 40,
+  history: 'lorem ipsum',
 };
 const testCharacter2 = {
   name: 'Donald',
   image: 'https://static.wikia.nocookie.net/disney/images/6/6f/Donald_Duck.png',
   age: 16,
   weight: 30,
+  history: 'lorem ipsum',
 };
 
 describe('Characters Routes', () => {
@@ -26,7 +28,7 @@ describe('Characters Routes', () => {
     it('should return status 400 and corresponding text if any of the mandatory parameters is not send', async () => {
       const res = await request(server).post('/characters');
       expect(res.statusCode).toBe(400);
-      expect(res.text).toBe('Missing required properties');
+      expect(res.text).toBe('Missing required parameters');
     });
 
     it('should return status 201 if the character was succesfully created', async () => {
@@ -42,6 +44,10 @@ describe('Characters Routes', () => {
   });
 
   describe('GET', () => {
+    beforeEach(async () => {
+      await Character.create(testCharacter1);
+      await Character.create(testCharacter2);
+    });
     it('should return status 200 and the characters list', async () => {
       const res = await request(server).get('/characters');
       expect(res.statusCode).toBe(200);
@@ -50,18 +56,23 @@ describe('Characters Routes', () => {
           id: 1,
           name: 'Mickey',
           image: 'https://sm.ign.com/ign_es/screenshot/default/11112_uq7s.jpg',
-          age: 15,
-          weight: 40,
         },
         {
           id: 2,
           name: 'Donald',
           image:
             'https://static.wikia.nocookie.net/disney/images/6/6f/Donald_Duck.png',
-          age: 16,
-          weight: 30,
         },
       ]);
+    });
+
+    it('should return status 200 and all the details of a character if an id is sent by query', async () => {
+      const res = await request(server).get('/characters?id=1');
+      expect(res.statusCode).toBe(200);
+      expect(res.body).toEqual({
+        ...testCharacter1,
+        id:1
+      })
     });
   });
 
