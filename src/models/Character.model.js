@@ -30,6 +30,7 @@ module.exports = (sequelize) => {
       },
       weight: {
         type: DataTypes.INTEGER,
+        allowNull: false
       },
       history: {
         type: DataTypes.TEXT,
