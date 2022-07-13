@@ -15,7 +15,7 @@ module.exports = (sequelize) => {
         unique: true,
       },
       releaseDate: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: false,
         validate: {
           isDate: true,
@@ -26,6 +26,10 @@ module.exports = (sequelize) => {
       },
       rating: {
         type: DataTypes.ENUM(['1', '2', '3', '4', '5']),
+      },
+      genreId: {
+        type: DataTypes.INTEGER,
+        foreignKey: true
       },
     },
     {
