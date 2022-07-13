@@ -5,8 +5,11 @@ module.exports = (sequelize) => {
     'Characters',
     {
       image: {
-        type: DataTypes.BLOB(),
+        type: DataTypes.STRING,
         allowNull: true,
+        validate: {
+          is: /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)/g,
+        },
       },
       name: {
         type: DataTypes.STRING,
@@ -22,15 +25,15 @@ module.exports = (sequelize) => {
         validate: {
           isInt: true,
           min: 1,
-          max: 99
+          max: 99,
         },
       },
       weight: {
-        type: DataTypes.INTEGER,        
+        type: DataTypes.INTEGER,
       },
       history: {
         type: DataTypes.TEXT,
-      }
+      },
     },
     {
       timestamps: false,
