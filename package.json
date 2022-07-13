@@ -1,0 +1,38 @@
+{
+  "name": "alchemy-challenge",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "start": "node ./dist/index.js",
+    "dev": "nodemon",
+    "test": "jest --verbose --detectOpenHandles",
+    "test:model:movie": "jest ./tests/movies-model.spec.js --watch",
+    "test:model:character": "jest ./tests/character-model.spec.js --watch",
+    "test:model:genre": "jest ./tests/genre-model.spec.js --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/preset-env": "^7.18.6",
+    "@babel/preset-typescript": "^7.18.6",
+    "@types/node": "^18.0.3",
+    "jest": "^28.1.2",
+    "morgan": "^1.10.0",
+    "supertest": "^6.2.4",
+    "ts-jest": "^28.0.5",
+    "ts-node": "^10.8.2",
+    "typescript": "^4.7.4"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "moment": "^2.29.4",
+    "pg": "^8.7.3",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.21.3",
+    "tslib": "^2.4.0"
+  }
+}

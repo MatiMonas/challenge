@@ -1,0 +1,24 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "target": "es6",
+    "module": "CommonJs",
+    "allowJs": true,
+    "outDir": "dist",
+    "strict": false,
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true
+  },
+  "include": [
+    "typings.d.ts",
+    "./src/**/*"
+  ],
+  "exclude": [
+    "./node_modules"
+  ]
+}
