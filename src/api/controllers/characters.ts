@@ -11,6 +11,13 @@ interface ICharacterWhere {
   movies?: number[];
 }
 
+interface IUpdateObject {
+  age?: number;
+  weight?: number;
+  history?: string;
+  image?: string;
+}
+
 export async function getCharactersController(
   req: Request,
   res: Response,
@@ -124,6 +131,30 @@ export async function deleteCharacterController(
   next: NextFunction,
 ) {
   try {
+    let { id } = req.query;
+
+    if (!id) {
+      return res.status(400).json({ message: 'missing required parameters' });
+    }
+
+    if (!/^[0-9]*$/.test(id)) {
+      return res.status(400).json({
+        message: 'id must be an integer number',
+      });
+    }
+
+    id = parseInt(id);
+
+    const character = await Character.findByPk(id);
+
+    if (!character) {
+      return res.status(404).json({
+        message: 'character not found',
+      });
+    }
+
+    await character.destroy();
+    return res.status(200).json({ message: 'character deleted successfully' });
   } catch (err) {
     next(err);
   }
@@ -135,6 +166,44 @@ export async function patchCharacterController(
   next: NextFunction,
 ) {
   try {
+    const { age, weight, history, image, movies } = req.body;
+    let { id } = req.query;
+
+    let moviesIds = movies?.map((ids: string) =>
+      parseInt(ids) ? parseInt(ids) : false,
+    );
+    if (!id) {
+      return res.status(400).json({ message: 'missing id' });
+    }
+    if (!/^[0-9]*$/.test(id)) {
+      return res.status(400).json({
+        message: 'id must be an integer number',
+      });
+    }
+
+    if (!age && !weight && !moviesIds?.length && !history && !image) {
+      return res.status(400).json({ message: 'missing required parameters' });
+    }
+
+    id = parseInt(id);
+
+    const character = await Character.findByPk(id);
+
+    if (!character) {
+      return res.status(404).json({
+        message: 'character not found',
+      });
+    }
+
+    let updateObject: IUpdateObject = {};
+    age && (updateObject.age = age);
+    weight && (updateObject.weight = weight);
+    history && (updateObject.history = history);
+    image && (updateObject.image = image);
+
+    moviesIds && character.addMovies(moviesIds);
+    await character.update(updateObject, { where: { id } });
+    return res.sendStatus(204);
   } catch (err) {
     next(err);
   }
