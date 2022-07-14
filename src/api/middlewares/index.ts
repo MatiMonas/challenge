@@ -1,8 +1,8 @@
-import { NextFunction, Request, Response, Error  } from 'express';
+import { NextFunction, Request, Response } from 'express';
 
 
 export const errorHandler = (
-  err: Error,
+  err: any,
   res: Response,
   _next: NextFunction
 ): void => {

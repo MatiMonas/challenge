@@ -2,11 +2,11 @@ import { NextFunction, Request, Response } from 'express';
 import { Op } from 'sequelize';
 import db from '../../db';
 
-const { Character, Movie, Genre } = db;
+const { Character, Movie } = db;
 
 interface IMoviesWhere {
   title?: { [Op.iLike]: string };
-  genreId?: string;
+  genreId?: number;
 }
 
 export async function movieGetController(
@@ -15,15 +15,21 @@ export async function movieGetController(
   next: NextFunction,
 ) {
   try {
-    let { id, title, genre, orderBy } = req.query;
-    id = parseInt(id) as number;
-    genre = parseInt(genre) as number;
-    orderBy = orderBy as string;
+    let { id, genre } = req.query;
+    let parsedId: number | undefined;
+    let parsedGenreId: number | undefined;
+    let title: string | undefined;
+    let orderBy: string | undefined;
+
+    parsedId = Number(id);
+    parsedGenreId = Number(genre);
+    title = req.query.title as string;
+    orderBy = req.query.orderBy as string;
 
     const where: IMoviesWhere = {};
 
     if (title) where.title = { [Op.iLike]: `%${title}%` };
-    if (genre) where.genreId = genre;
+    if (genre) where.genreId = parsedGenreId;
 
     if (!id) {
       const querySearch = {
@@ -42,7 +48,7 @@ export async function movieGetController(
       return res.status(200).json(movies);
     }
 
-    if (isNaN(id)) {
+    if (isNaN(parsedId)) {
       return res.status(400).send({
         message: 'id must be a number',
       });
@@ -72,10 +78,17 @@ export async function movieCreatorController(
   next: NextFunction,
 ) {
   try {
-    let { title, releaseDate, rating, image, genreId } = req.body;
+    let title: string | undefined;
+    let releaseDate: string | undefined;
+    let image: string | undefined;
+    let rating: number | undefined;
+    let genreId: number | undefined;
 
-    genreId = Number(genreId).toFixed(0);
-    rating = Number(rating).toFixed(0);
+    title = req.body.title;
+    releaseDate = req.body.releaseDate;
+    image = req.body.image;
+    rating = Number(req.body.rating);
+    genreId = Number(req.body.genreId);
 
     if (!title || !releaseDate || !genreId) {
       return res.status(400).send({
@@ -108,20 +121,23 @@ export async function deleteMovieController(
 ) {
   try {
     const { id } = req.query;
+    let parsedId: number | undefined;
 
-    if (!id) {
+    parsedId = Number(id);
+
+    if (!parsedId) {
       return res.status(400).send({
         message: 'missing required parameters',
       });
     }
 
-    if (isNaN(id)) {
+    if (isNaN(parsedId)) {
       return res.status(400).send({
         message: 'id must be an integer number',
       });
     }
 
-    const movie = await Movie.findByPk(id);
+    const movie = await Movie.findByPk(parsedId);
 
     if (!movie) {
       return res.status(404).send({
@@ -144,18 +160,25 @@ export async function patchMovieController(
   next: NextFunction,
 ) {
   try {
-    const { id } = req.query;
-    const { rating, image } = req.body;
+    const { id, rating } = req.query;
 
-    if (!id) {
+    let parsedId: number | undefined;
+    let parsedRating: number | undefined;
+    let image: string | undefined;
+
+    parsedId = Number(id);
+    parsedRating = Number(rating);
+    image = req.body.image;
+
+    if (!parsedId) {
       return res.status(400).send({
         message: 'missing id',
       });
     }
 
-    if (isNaN(id)) {
+    if (isNaN(parsedId) || isNaN(parsedRating)) {
       return res.status(400).send({
-        message: 'id must be an integer number',
+        message: 'id and rating must be integers',
       });
     }
 
@@ -163,7 +186,7 @@ export async function patchMovieController(
       return res.status(400).json({ message: 'missing required parameters' });
     }
 
-    const movie = await Movie.findByPk(id);
+    const movie = await Movie.findByPk(parsedId);
 
     if (!movie) {
       return res.status(404).send({

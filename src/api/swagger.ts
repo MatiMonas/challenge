@@ -1,3 +1,5 @@
+//@ts-nocheck
+
 import { Application, Request, Response, NextFunction } from 'express';
 import swaggerJsDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';

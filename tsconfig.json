@@ -5,7 +5,7 @@
     "module": "CommonJs",
     "allowJs": true,
     "outDir": "dist",
-    "strict": false,
+    "strict": true,
     "typeRoots": [
       "node_modules/@types"
     ],
