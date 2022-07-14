@@ -4,6 +4,7 @@ import config from './config';
 import CharacterFactory from '../models/Character.model';
 import MovieFactory from '../models/Movie.model';
 import GenreFactory from '../models/Genre.model';
+import UsersFactory from '../models/User.model';
 
 const { DB_LOGGING = false } = process.env;
 
@@ -17,6 +18,7 @@ const sequelize = new Sequelize(config, {
 const Character = CharacterFactory(sequelize);
 const Movie = MovieFactory(sequelize);
 const Genre = GenreFactory(sequelize);
+const User = UsersFactory(sequelize);
 
 // Un personaje puede estar en muchas peliculas
 // La pelicula puede tener muchos personajes
@@ -33,5 +35,6 @@ export default {
   sequelize,
   Character, 
   Movie, 
-  Genre
+  Genre,
+  User
 };
