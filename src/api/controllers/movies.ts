@@ -76,17 +76,16 @@ export async function movieCreatorController(
 
     genreId = Number(genreId).toFixed(0);
     rating = Number(rating).toFixed(0);
-    
+
     if (!title || !releaseDate || !genreId) {
       return res.status(400).send({
         message: 'Missing required parameters',
       });
     }
 
-    
     if (isNaN(genreId) || isNaN(rating)) {
       return res.status(400).json({
-        message: 'rating and genreId must be an integer number'
+        message: 'rating and genreId must be an integer number',
       });
     }
 
@@ -106,13 +105,13 @@ export async function deleteMovieController(
   req: Request,
   res: Response,
   next: NextFunction,
-){
+) {
   try {
     const { id } = req.query;
 
-    if(!id){
+    if (!id) {
       return res.status(400).send({
-        message: 'missing required parameters'
+        message: 'missing required parameters',
       });
     }
 
@@ -133,6 +132,51 @@ export async function deleteMovieController(
     await movie.destroy();
 
     return res.status(200).json({ message: 'movie deleted successfully' });
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
+}
+
+export async function patchMovieController(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const { id } = req.query;
+    const { rating, image } = req.body;
+
+    if (!id) {
+      return res.status(400).send({
+        message: 'missing id',
+      });
+    }
+
+    if (isNaN(id)) {
+      return res.status(400).send({
+        message: 'id must be an integer number',
+      });
+    }
+
+    if (!rating && !image) {
+      return res.status(400).json({ message: 'missing required parameters' });
+    }
+
+    const movie = await Movie.findByPk(id);
+
+    if (!movie) {
+      return res.status(404).send({
+        message: 'movie not found',
+      });
+    }
+
+    if (rating) movie.rating = rating;
+    if (image) movie.image = image;
+
+    await movie.save();
+
+    return res.sendStatus(204);
   } catch (err) {
     console.log(err);
     next(err);
