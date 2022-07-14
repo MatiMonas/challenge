@@ -1,3 +1,5 @@
+import bcrypt from 'bcryptjs';
+
 export const capitalizeFirstLetter = (str: string) =>
   str.charAt(0).toUpperCase() + str.slice(1);
 
@@ -11,4 +13,9 @@ export function formatDate(date: Date) {
     padTo2Digits(date.getMonth() + 1),
     date.getFullYear(),
   ].join('/');
+}
+
+export function hashPassword(password: string) {
+  let salt = bcrypt.genSaltSync(10);
+  return bcrypt.hashSync(password, salt);
 }
