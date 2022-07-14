@@ -1,8 +1,18 @@
 import { NextFunction, Request, Response } from 'express';
+import { Op } from 'sequelize';
 import { movie } from '../../common/interfaces';
 import db from '../../db';
 
 const { Character, Movie, Genre } = db;
+
+interface IMoviesWhere {
+  title?: {[Op.iLike]: string};
+  genreId?: string;
+}
+
+interface IMoviesOrder{
+  order?: string
+}
 
 export async function movieGetController(
   req: Request,
@@ -10,43 +20,54 @@ export async function movieGetController(
   next: NextFunction,
 ) {
   try {
-    let { id } = req.query;
-    let moviesToSend: movie[] = [];
+    let { id, title, genre, orderBy } = req.query;
+    id = parseInt(id) as number;
+    genre  = parseInt(genre) as number;
+    orderBy = orderBy as string;
 
-    id = parseInt(id);
+    const where: IMoviesWhere = {};
+    
 
-    const condition: { where?: { id?: number }; raw: boolean } = { raw: true };
-    const where: { id?: number } = {};
+    if (title) where.title =  {[Op.iLike]: `%${title}%`};
+    if (genre) where.genreId = genre;
 
-    if (id) where.id = id;
+    if (!id) {
+      const querySearch ={
+        where,
+        attributes: ['id', 'title', 'image', 'releaseDate'],
+        order: orderBy ? [['rating',orderBy]] : [],
+      }
+      
+      const movies = await Movie.findAll(querySearch);
 
-    condition.where = where;
+      if (!movies.length) {
+        return res.status(404).send({
+          message: 'movie/s not found',
+        });
+      }
+      return res.status(200).json(movies);
+    }
 
-    const movies = await Movie.findAll(condition, {
-      include: Character, Genre                          
+    if (isNaN(id)) {
+      return res.status(400).send({
+        message: 'id must be a number',
+      });
+    }
+
+    const movie = await Movie.findByPk(id, {
+      include: [
+        {
+          model: Character,
+          as: 'characters',
+          attributes: ['id', 'name'],
+          through: { attributes: [] },
+        },
+      ],
     });
 
-    if (!movies.length) {
-      return res.status(404).send({
-        message: 'movie/s not found',
-      });
-    }
-
-    if (!isNaN(id)) {
-      moviesToSend = movies[0];
-    } else {
-      moviesToSend = movies.map((movie: movie) => {
-        return {
-          id: movie.id,
-          name: movie.title,
-          image: movie.image,
-          releaseDate: movie.releaseDate,
-        };
-      });
-    }
-
-    return res.status(200).json(moviesToSend);
+    return res.status(200).json(movie);
   } catch (err) {
+    console.log(err);
     next(err);
   }
 }
