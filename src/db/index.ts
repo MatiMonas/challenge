@@ -4,7 +4,6 @@ import config from './config';
 import CharacterFactory from '../models/Character.model';
 import MovieFactory from '../models/Movie.model';
 import GenreFactory from '../models/Genre.model';
-import { capitalizeFirstLetter } from '../common/utils';
 
 const { DB_LOGGING = false } = process.env;
 
