@@ -26,25 +26,42 @@ const testCharacter2 = {
 describe('Characters Routes', () => {
   beforeAll(async () => {
     await sequelize.sync({ force: true });
+    await Genre.bulkCreate([{ name: 'Action' }, { name: 'Drama' }]);
+    await Movie.create({
+      title: 'Mulan',
+      releaseDate: '2022-01-17',
+      image: 'https://pics.filmaffinity.com/Mulan-247098384-large.jpg',
+      rating: 5,
+      genreId: 1,
+    });
   });
 
   describe('POST', () => {
-    it('should return status 400 and corresponding text if any of the mandatory parameters is not sent', async () => {
+    it('should return status 400 and corresponding text if any of the mandatory parameters are missing', async () => {
       const res = await request(server).post('/characters');
       expect(res.statusCode).toBe(400);
       expect(res.text).toBe('Missing required parameters');
     });
 
+    it('should return status 400 and corresponding message if age or weight are not a number', async () => {
+      const res = await request(server)
+        .post('/characters')
+        .send({
+          name: 'Mickey',
+          image: 'https://sm.ign.com/ign_es/screenshot/default/11112_uq7s.jpg',
+          age: '15sd2',
+          weight: '40sd2',
+          history: 'lorem ipsum',
+          movies: [1],
+        });
+      expect(res.statusCode).toBe(400);
+      expect(res.body).toEqual({
+        message: 'age and weight must be an integer number',
+      });
+    });
+
     it('should return status 201 if the character was succesfully created', async () => {
       try {
-        await Genre.bulkCreate([{ name: 'Action' }, { name: 'Drama' }]);
-        await Movie.create({
-          title: 'Mulan',
-          releaseDate: '2022-01-17',
-          image: 'https://pics.filmaffinity.com/Mulan-247098384-large.jpg',
-          rating: 5,
-          genreId: 1,
-        });
         const res = await request(server)
           .post('/characters')
           .send(testCharacter1);
