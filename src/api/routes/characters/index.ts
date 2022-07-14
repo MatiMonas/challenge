@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { checkJWT } from '../../../common/jwt';
+import { checkJWT } from '../../middlewares'
 import {
   getCharactersController,
   createCharacterController,
@@ -96,7 +96,7 @@ const router = Router()
    *       201:
    *         description: Created
    */
-  .post('/', createCharacterController)
+  .post('/',checkJWT, createCharacterController)
 
   /**
    * @openapi
@@ -123,7 +123,7 @@ const router = Router()
    *        description: Deleted
    *        content: {}
    */
-  .delete('/', deleteCharacterController)
+  .delete('/', checkJWT, deleteCharacterController)
 
   /**
    * @openapi
@@ -178,6 +178,6 @@ const router = Router()
    *        description: Endopoint to update a character
    *        content: {}
    */
-  .patch('/', patchCharacterController);
+  .patch('/', checkJWT, patchCharacterController);
 
 export default router;

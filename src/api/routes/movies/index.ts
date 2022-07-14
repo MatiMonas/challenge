@@ -5,6 +5,7 @@ import {
   deleteMovieController,
   patchMovieController,
 } from '../../controllers/movies';
+import { checkJWT } from '../../middlewares';
 
 const router = Router()
   /**
@@ -93,7 +94,7 @@ const router = Router()
    *       201:
    *         description: Created
    */
-  .post('/', movieCreatorController)
+  .post('/', checkJWT, movieCreatorController)
   /**
    * @openapi
    * /movies:
@@ -119,7 +120,7 @@ const router = Router()
    *        description: Deleted
    *        content: {}
    */
-  .delete('/', deleteMovieController)
+  .delete('/', checkJWT, deleteMovieController)
 
   /**
    * @openapi
@@ -160,6 +161,6 @@ const router = Router()
    *        description: Endopoint to update a character
    *        content: {}
    */
-  .patch('/', patchMovieController);
+  .patch('/', checkJWT, patchMovieController);
 
 export default router;
