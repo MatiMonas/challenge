@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
 import db from '../../db';
-import { character } from '../../common/interfaces';
 import { Op } from 'sequelize';
 
 const { Character, Movie } = db;
@@ -98,10 +97,26 @@ export async function createCharacterController(
     let { name, age, weight, history, image, movies } = req.body;
 
     let moviesIds = movies?.map((ids: string) =>
-      parseInt(ids) ? parseInt(ids) : false,
+      parseInt(ids) ? Number(parseInt(ids)) : false,
     );
+
+    age = Number(age).toFixed(0);
+    weight = Number(weight).toFixed(0);
+
     if (!name || !age || !weight || !moviesIds[0]) {
       return res.status(400).send('Missing required parameters');
+    }
+
+    if (isNaN(age) || isNaN(weight)) {
+      return res.status(400).json({
+        message: 'age and weight must be an integer number',
+      });
+    }
+
+    if (moviesIds.indexOf(false) !== -1) {
+      return res.status(400).json({
+        message: 'movies must be an array of integer numbers',
+      });
     }
 
     Character.create({
@@ -118,6 +133,8 @@ export async function createCharacterController(
         return res.status(201).send('character created successfully');
       })
       .catch((err) => {
+        console.log(err);
+
         next(err);
       });
   } catch (err) {
