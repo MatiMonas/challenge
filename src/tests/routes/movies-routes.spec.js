@@ -111,23 +111,21 @@ describe('Movies Routes', () => {
           expect(res.statusCode).toBe(400);
           expect(res.body).toEqual({ message: 'missing required parameters' });
         });
-        // it('should return 400 if the id is not a number and a message to the user', async () => {
-        //   const res = await request(server).delete('/movies?id=1a');
-        //   expect(res.statusCode).toBe(400);
-        //   expect(res.body).toEqual({ message: 'id must be an integer number' });
-        // });
-        // it('should return 404 if the movie to delete does not exist', async () => {
-        //   const res = await request(server).delete('/movies?id=5');
-        //   expect(res.statusCode).toBe(404);
-        //   expect(res.body).toEqual({ message: 'movie not found' });
-        // });
-        // it('should return status 200 and correctly delete a characacter', async () => {
-        //   const res = await request(server).delete('/movies?id=1');
-        //   const movie = await Character.findByPk(1);
-        //   expect(movie).toBe(null);
-        //   expect(res.statusCode).toBe(200);
-        //   expect(res.body).toEqual({ message: 'movie deleted successfully' });
-        // });
+        it('should return 400 if the id is not a number and a message to the user', async () => {
+          const res = await request(server).delete('/movies?id=1a');
+          expect(res.statusCode).toBe(400);
+          expect(res.body).toEqual({ message: 'id must be an integer number' });
+        });
+        it('should return 404 if the movie to delete does not exist', async () => {
+          const res = await request(server).delete('/movies?id=5');
+          expect(res.statusCode).toBe(404);
+          expect(res.body).toEqual({ message: 'movie not found' });
+        });
+        it('should return status 200 and correctly delete a characacter', async () => {
+          const res = await request(server).delete('/movies?id=1');
+          expect(res.statusCode).toBe(200);
+          expect(res.body).toEqual({ message: 'movie deleted successfully' });
+        });
       });
 
       describe('PATCH', () => {
