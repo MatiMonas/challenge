@@ -1,4 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
+import jwt from 'jsonwebtoken';
+
+const { TOKEN_SECRET } = process.env;
 
 export const errorHandler = (
   err: any,
@@ -18,21 +21,23 @@ export const errorHandler = (
 
 export function checkJWT(req: Request, res: Response, next: NextFunction) {
   try {
-    const { authorization } = req.headers;
+    const authorizationToken: string = req.headers['authorization'] || '';
 
-    if (!authorization) {
+    if (!authorizationToken) {
       return res.status(401).json({
         message: 'No token provided',
       });
     }
 
-    let token: string = authorization.split(' ')[1];
     //@ts-ignore
-    let decodedToken = jwt.verify(token, TOKEN_SECRET);
+    let decodedToken = jwt.verify(authorizationToken, TOKEN_SECRET);
+
     //@ts-ignore
     req.user = decodedToken;
     next();
   } catch (error) {
+    console.log(error);
+
     res.status(401).json({
       message: 'invalid token',
     });
