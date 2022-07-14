@@ -54,6 +54,12 @@ const router = Router()
    *     tags:
    *       - Movies Routes
    *     parameters:
+   *       - in: header
+   *         name: Authorization
+   *         description: Bearer token you got from login.
+   *         required: true
+   *         schema:
+   *         type: string 
    *       - in: body
    *         name:
    *          movies
@@ -96,6 +102,12 @@ const router = Router()
    *    tags:
    *      - Movies Routes
    *    parameters:
+   *      - in: header
+   *        name: Authorization
+   *        description: Bearer token you got from login.
+   *        required: true
+   *        schema:
+   *        type: string 
    *      - in: query
    *        name: id
    *        description: Movie id
@@ -117,6 +129,12 @@ const router = Router()
    *     tags:
    *       - Movies Routes
    *     parameters:
+   *       - in: header
+   *         name: Authorization
+   *         description: Bearer token you got from login.
+   *         required: true
+   *         schema:
+   *         type: string 
    *       - in: query
    *         name: id
    *         description: Movie id

@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { checkJWT } from '../../../common/jwt';
 import {
   getCharactersController,
   createCharacterController,
@@ -43,7 +44,7 @@ const router = Router()
    *         description: Return an array of characters with their id, name and image.
    *         content: {}
    */
-  .get('/', getCharactersController)
+  .get('/',getCharactersController)
 
   /**
    * @openapi
@@ -53,6 +54,12 @@ const router = Router()
    *     tags:
    *       - Character Routes
    *     parameters:
+   *       - in: header
+   *         name: Authorization
+   *         description: Bearer token you got from login.
+   *         required: true
+   *         schema:
+   *          type: string
    *       - in: body
    *         name:
    *          character
@@ -99,6 +106,12 @@ const router = Router()
    *    tags:
    *      - Character Routes
    *    parameters:
+   *      - in: header
+   *        name: Authorization
+   *        description: Bearer token you got from login.
+   *        required: true
+   *        schema:
+   *         type: string 
    *      - in: query
    *        name: id
    *        description: Character id
@@ -120,6 +133,12 @@ const router = Router()
    *     tags:
    *       - Character Routes
    *     parameters:
+   *       - in: header
+   *         name: Authorization
+   *         description: Bearer token you got from login.
+   *         required: true
+   *         schema:
+   *         type: string 
    *       - in: query
    *         name: id
    *         description: Character id
