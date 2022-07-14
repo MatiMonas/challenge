@@ -143,7 +143,7 @@ describe('Movies Routes', () => {
         it('should return 400 if the id is not a number and a message to the user', async () => {
           const res = await request(server).patch('/movies?id=1a');
           expect(res.statusCode).toBe(400);
-          expect(res.body).toEqual({ message: 'id must be an integer number' });
+          expect(res.body).toEqual({ message: 'id and rating must be integers' });
         });
 
         it('should return 404 if the movie to delete does not exist', async () => {
