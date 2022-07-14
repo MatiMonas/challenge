@@ -129,41 +129,41 @@ describe('Movies Routes', () => {
       });
 
       describe('PATCH', () => {
-        // it('should return status 400 if the id was not sent', async () => {
-        //   const res = await request(server).patch('/movies');
-        //   expect(res.statusCode).toBe(400);
-        //   expect(res.body).toEqual({ message: 'missing id' });
-        // });
-        // it('should return status 400 if the no required parameter to update was sent', async () => {
-        //   const res = await request(server).patch('/movies?id=2');
-        //   expect(res.statusCode).toBe(400);
-        //   expect(res.body).toEqual({ message: 'missing required parameters' });
-        // });
-        // it('should return 400 if the id is not a number and a message to the user', async () => {
-        //   const res = await request(server).patch('/movies?id=1a');
-        //   expect(res.statusCode).toBe(400);
-        //   expect(res.body).toEqual({ message: 'id must be an integer number' });
-        // });
-        // it('should return 404 if the movie to delete does not exist', async () => {
-        //   const res = await request(server)
-        //     .patch('/movies?id=5')
-        //     .send({ age: 10 });
-        //   expect(res.statusCode).toBe(404);
-        //   expect(res.body).toEqual({ message: 'movie not found' });
-        // });
-        // it('should send status 204 if the movie was updated', async () => {
-        //   const res = await request(server)
-        //     .patch('/movies?id=2')
-        //     .send({
-        //       age: 20,
-        //       weight: 30,
-        //       history: 'lorem lorem',
-        //       movies: [1, 2],
-        //       image:
-        //         'https://static.wikia.nocookie.net/disney/images/6/6f/Donald_Duck.png',
-        //     });
-        //   expect(res.statusCode).toBe(204);
-        // });
+        it('should return status 400 if the id was not sent', async () => {
+          const res = await request(server).patch('/movies');
+          expect(res.statusCode).toBe(400);
+          expect(res.body).toEqual({ message: 'missing id' });
+        });
+        it('should return status 400 if the no required parameter to update was sent', async () => {
+          const res = await request(server).patch('/movies?id=2');
+          expect(res.statusCode).toBe(400);
+          expect(res.body).toEqual({ message: 'missing required parameters' });
+        });
+
+        it('should return 400 if the id is not a number and a message to the user', async () => {
+          const res = await request(server).patch('/movies?id=1a');
+          expect(res.statusCode).toBe(400);
+          expect(res.body).toEqual({ message: 'id must be an integer number' });
+        });
+
+        it('should return 404 if the movie to delete does not exist', async () => {
+          const res = await request(server)
+            .patch('/movies?id=5')
+            .send({ rating: 3 });
+          expect(res.statusCode).toBe(404);
+          expect(res.body).toEqual({ message: 'movie not found' });
+        });
+
+        it('should send status 204 if the movie was updated', async () => {
+          const res = await request(server)
+            .patch('/movies?id=2')
+            .send({
+              rating: 2,
+              image:
+                'https://static.wikia.nocookie.net/disney/images/6/6f/Donald_Duck.png',
+            });
+          expect(res.statusCode).toBe(204);
+        });
       });
     });
   });
