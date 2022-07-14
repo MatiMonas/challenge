@@ -10,10 +10,6 @@ interface IMoviesWhere {
   genreId?: string;
 }
 
-interface IMoviesOrder{
-  order?: string
-}
-
 export async function movieGetController(
   req: Request,
   res: Response,
@@ -35,7 +31,7 @@ export async function movieGetController(
       const querySearch ={
         where,
         attributes: ['id', 'title', 'image', 'releaseDate'],
-        order: orderBy ? [['rating',orderBy]] : [],
+        order: /^(asc|desc)$/i.test(orderBy) ? [['rating',orderBy]] : [],
       }
       
       const movies = await Movie.findAll(querySearch);
