@@ -16,7 +16,7 @@ module.exports = (sequelize) => {
         allowNull: false,
         unique: true,
         validate: {
-          is: /^[a-zA-Z]+$/,
+          is: /^(?![ .]+$)[a-zA-Z ]*$/gm,
         },
       },
       age: {
