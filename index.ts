@@ -7,6 +7,7 @@ const port = process.env.PORT || 3001;
 
 server.listen(port, async () => {
   await connectToDB().then(() => {
+    // TODO seeders
     Genre.bulkCreate([
       { name: 'Action' },
       { name: 'Adventure' },
