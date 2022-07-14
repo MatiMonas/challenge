@@ -1,5 +1,6 @@
 import { Router} from 'express';
 import testRoutes from '../routes/testRoutes';
+import authRoutes from '../routes/auth';
 import characterRoutes from '../routes/characters';
 import moviesRoutes from '../routes/movies';
 
@@ -15,6 +16,7 @@ const router = Router()
    *     description: Routes to manage movies, CRUD
    */
   .use('/test', testRoutes)
+  .use('/auth', authRoutes)
   .use('/characters', characterRoutes)
   .use('/movies', moviesRoutes)
 export default router;
