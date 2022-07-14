@@ -20,6 +20,24 @@ const router = Router()
    *         required: false
    *         schema:
    *          type: number
+   *       - in: query
+   *         name: name
+   *         description: Search by character name.
+   *         required: false
+   *         schema:
+   *          type: string
+   *       - in: query
+   *         name: age
+   *         description: Search by character age.
+   *         required: false
+   *         schema:
+   *          type: number
+   *       - in: query
+   *         name: movies
+   *         description: Search by multiple movies. Example 'movies=1,2,3,4'
+   *         required: false
+   *         schema:
+   *          type: number
    *     responses:
    *       200:
    *         description: Return an array of characters with their id, name and image.
