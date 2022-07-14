@@ -20,9 +20,6 @@ module.exports = (sequelize) => {
         validate: {
           isDate: true,
         },
-        get(){
-          return moment(this.getDataValue('releaseDate')).format('DD/MM/YYYY');
-        }
       },
       rating: {
         type: DataTypes.ENUM(['1', '2', '3', '4', '5']),
