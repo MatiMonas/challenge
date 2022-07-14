@@ -29,7 +29,7 @@ describe('Characters Routes', () => {
   });
 
   describe('POST', () => {
-    it('should return status 400 and corresponding text if any of the mandatory parameters is not send', async () => {
+    it('should return status 400 and corresponding text if any of the mandatory parameters is not sent', async () => {
       const res = await request(server).post('/characters');
       expect(res.statusCode).toBe(400);
       expect(res.text).toBe('Missing required parameters');
