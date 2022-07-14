@@ -11,7 +11,8 @@
     "test:model:character": "jest ./tests/models/character-model.spec.js --watch",
     "test:model:genre": "jest ./tests/models/genre-model.spec.js --watch",
     "test:routes": "jest ./tests/routes/test-routes.spec.js --watch --verbose",
-    "test:routes:character": "jest ./tests/routes/characters-routes.spec.js --watch --verbose"
+    "test:routes:character": "jest ./tests/routes/characters-routes.spec.js --watch --verbose",
+    "test:routes:movies": "jest ./tests/routes/movies-routes.spec.js --watch --verbose"
   },
   "keywords": [],
   "author": "",
