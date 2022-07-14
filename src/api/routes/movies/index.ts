@@ -12,10 +12,28 @@ const router = Router()
    *     parameters:
    *       - in: query
    *         name: id
-   *         description: Movie id to get the details of a character. Id is not required.
+   *         description: Movie id to get the details of a movie. .
    *         required: false
    *         schema:
    *          type: number 
+   *       - in: query
+   *         name: title
+   *         description: Search movie by title.
+   *         required: false
+   *         schema:
+   *          type: string 
+   *       - in: query
+   *         name: genre
+   *         description: Search movie by genreId.
+   *         required: false
+   *         schema:
+   *          type: number 
+   *       - in: query
+   *         name: orderBy
+   *         description: Orders movies by rating.
+   *         required: false
+   *         schema:
+   *          type: string 
    *     responses:
    *       200:
    *         description: Return an array of characters with their id, name and image.
