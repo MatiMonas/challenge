@@ -28,12 +28,12 @@ const router = Router()
    * /movies:
    *   post:
    *     summary: Creates a new movie
-   *     tags:
+   *     tags: 
    *       - Movies Routes
    *     parameters:
    *       - in: body
-   *         name:
-   *          character
+   *         name: 
+   *          movies
    *         description: Movies object
    *         schema:
    *          type: object
@@ -46,7 +46,7 @@ const router = Router()
    *              example: Mulan
    *              required: true
    *            releaseDate:
-   *              type: date
+   *              type: string
    *              example: 2022-01-17
    *              required: true
    *            image:
@@ -56,10 +56,14 @@ const router = Router()
    *              type: number
    *              default: 5
    *              example: 5
+   *            genreId:
+   *              type: number
+   *              example: 1
+   *              required: true
    *     responses:
    *       201:
    *         description: Created
    */
   .post('/', movieCreatorController);
-
+ 
 export default router;
