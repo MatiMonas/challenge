@@ -101,3 +101,40 @@ export async function movieCreatorController(
     next(err);
   }
 }
+
+export async function deleteMovieController(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+){
+  try {
+    const { id } = req.query;
+
+    if(!id){
+      return res.status(400).send({
+        message: 'missing required parameters'
+      });
+    }
+
+    if (isNaN(id)) {
+      return res.status(400).send({
+        message: 'id must be an integer number',
+      });
+    }
+
+    const movie = await Movie.findByPk(id);
+
+    if (!movie) {
+      return res.status(404).send({
+        message: 'movie not found',
+      });
+    }
+
+    await movie.destroy();
+
+    return res.status(200).json({ message: 'movie deleted successfully' });
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
+}
