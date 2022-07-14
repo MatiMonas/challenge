@@ -24,7 +24,7 @@ const testCharacter2 = {
 };
 
 describe('Characters Routes', () => {
-  beforeEach(async () => {
+  beforeAll(async () => {
     await sequelize.sync({ force: true });
   });
 
@@ -36,104 +36,145 @@ describe('Characters Routes', () => {
     });
 
     it('should return status 201 if the character was succesfully created', async () => {
-     try{
-
-       await Genre.create({ name: 'Action' });
-       await Movie.create({
-         title: 'Mulan',
-         releaseDate: '2022-01-17',
-         image: 'https://pics.filmaffinity.com/Mulan-247098384-large.jpg',
-         rating: 5,
-         genreId: 1,
-       });
-       const res = await request(server)
-         .post('/characters')
-         .send(testCharacter1);
-       expect(res.statusCode).toBe(201);
-       expect(res.text).toBe('character created successfully');
-     }
-     catch(err){
-      console.log(err)
-     }
+      try {
+        await Genre.bulkCreate([{ name: 'Action' }, { name: 'Drama' }]);
+        await Movie.create({
+          title: 'Mulan',
+          releaseDate: '2022-01-17',
+          image: 'https://pics.filmaffinity.com/Mulan-247098384-large.jpg',
+          rating: 5,
+          genreId: 1,
+        });
+        const res = await request(server)
+          .post('/characters')
+          .send(testCharacter1);
+        expect(res.statusCode).toBe(201);
+        expect(res.text).toBe('character created successfully');
+      } catch (err) {
+        console.log(err);
+      }
     });
   });
 
-  describe('GET', () => {
-    beforeEach(async () => {
-      const t1 = await Character.create(testCharacter1);
-      const t2 = await Character.create(testCharacter2);
-
-      await Promise.all([
-        t1.createMovie({ title: 'test movie', releaseDate: Date.now() }),
-        t2.createMovie({ title: 'test movie 2', releaseDate: Date.now() }),
-      ]);
+  describe('Multiple Routes', () => {
+    beforeAll(async () => {
+      try {
+        await Character.create(testCharacter2);
+        await Movie.create({
+          title: 'Mulan 2',
+          releaseDate: '2022-01-17',
+          image: 'https://pics.filmaffinity.com/Mulan-247098384-large.jpg',
+          rating: 5,
+          genreId: 2,
+        });
+      } catch (err) {
+        console.log(err);
+      }
     });
-    it('should return status 200 and the characters list', async () => {
-      const res = await request(server).get('/characters');
-      expect(res.statusCode).toBe(200);
-      expect(res.body).toEqual([
-        {
+
+    describe('GET', () => {
+      it('should return status 200 and the characters list', async () => {
+        const res = await request(server).get('/characters');
+        expect(res.statusCode).toBe(200);
+        expect(res.body).toEqual([
+          {
+            id: 1,
+            name: 'Mickey',
+            image:
+              'https://sm.ign.com/ign_es/screenshot/default/11112_uq7s.jpg',
+          },
+          {
+            id: 2,
+            name: 'Donald',
+            image:
+              'https://static.wikia.nocookie.net/disney/images/6/6f/Donald_Duck.png',
+          },
+        ]);
+      });
+
+      it('should return status 200 and all the details of a character if an id is sent by query', async () => {
+        const res = await request(server).get('/characters?id=1');
+        expect(res.statusCode).toBe(200);
+        expect(res.body).toEqual({
           id: 1,
-          name: 'Mickey',
           image: 'https://sm.ign.com/ign_es/screenshot/default/11112_uq7s.jpg',
-        },
-        {
-          id: 2,
-          name: 'Donald',
-          image:
-            'https://static.wikia.nocookie.net/disney/images/6/6f/Donald_Duck.png',
-        },
-      ]);
+          name: 'Mickey',
+          age: 15,
+          weight: 40,
+          history: 'lorem ipsum',
+          movies: [{ id: 1, title: 'Mulan' }],
+        });
+      });
+    });
+    describe('DELETE', () => {
+      it('should return 400 if the id was not sent', async () => {
+        const res = await request(server).delete('/characters');
+        expect(res.statusCode).toBe(400);
+        expect(res.body).toEqual({ message: 'missing required parameters' });
+      });
+      it('should return 400 if the id is not a number and a message to the user', async () => {
+        const res = await request(server).delete('/characters?id=1a');
+        expect(res.statusCode).toBe(400);
+        expect(res.body).toEqual({ message: 'id must be an integer number' });
+      });
+
+      it('should return 404 if the character to delete does not exist', async () => {
+        const res = await request(server).delete('/characters?id=5');
+        expect(res.statusCode).toBe(404);
+        expect(res.body).toEqual({ message: 'character not found' });
+      });
+
+      it('should return status 200 and correctly delete a characacter', async () => {
+        const res = await request(server).delete('/characters?id=1');
+        const character = await Character.findByPk(1);
+        expect(character).toBe(null);
+        expect(res.statusCode).toBe(200);
+        expect(res.body).toEqual({ message: 'character deleted successfully' });
+      });
     });
 
-    it('should return status 200 and all the details of a character if an id is sent by query', async () => {
-      const res = await request(server).get('/characters?id=1');
-      expect(res.statusCode).toBe(200);
-      expect(res.body).toEqual({
-        id: 1,
-        image: 'https://sm.ign.com/ign_es/screenshot/default/11112_uq7s.jpg',
-        name: 'Mickey',
-        age: 15,
-        weight: 40,
-        history: 'lorem ipsum',
-        movies: [{ id: 1, title: 'test movie' }],
+    describe('PATCH', () => {
+      it('should return status 400 if the id was not sent', async () => {
+        const res = await request(server).patch('/characters');
+        expect(res.statusCode).toBe(400);
+        expect(res.body).toEqual({ message: 'missing id' });
+      });
+
+      it('should return status 400 if the no required parameter to update was sent', async () => {
+        const res = await request(server).patch('/characters?id=2');
+        expect(res.statusCode).toBe(400);
+        expect(res.body).toEqual({ message: 'missing required parameters' });
+      });
+
+      it('should return 400 if the id is not a number and a message to the user', async () => {
+        const res = await request(server).patch('/characters?id=1a');
+        expect(res.statusCode).toBe(400);
+        expect(res.body).toEqual({ message: 'id must be an integer number' });
+      });
+
+      it('should return 404 if the character to delete does not exist', async () => {
+        const res = await request(server)
+          .patch('/characters?id=5')
+          .send({ age: 10 });
+        expect(res.statusCode).toBe(404);
+        expect(res.body).toEqual({ message: 'character not found' });
+      });
+
+      it('should send status 204 if the character was updated', async () => {
+        const res = await request(server)
+          .patch('/characters?id=2')
+          .send({
+            age: 20,
+            weight: 30,
+            history: 'lorem lorem',
+            movies: [1, 2],
+            image:
+              'https://static.wikia.nocookie.net/disney/images/6/6f/Donald_Duck.png',
+          });
+        expect(res.statusCode).toBe(204);
       });
     });
   });
-
-  // describe('DELETE',  () => {
-  //   it('should delete return 404 if the character to delete does not exist' , async () =>{
-  //     await Character.create(testCharacter1);
-  //     const res = await request(server).delete('/characters?id=2')
-  //     expect(res.statusCode).toBe(404)
-  //     expect(res.text).toBe('Character to delete was not found.')
-  //   })
-
-  //    it('should return status 200 and correctly delete a characacter', async ()=> {
-  //     await Character.create(testCharacter1);
-  //     const res = await request(server).delete('/characters?id=1')
-  //     expect(res.statusCode).toBe(200);
-
-  //     const character = Character.findByPk(1)
-  //     expect(character).toBe(undefined)
-  //    })
-  // })
-  // describe('PATCH', () => {
-  //   it('should return status 400 if no parameter was sent', async () => {
-  //     const res = await request(server).path('/characters?id=1')
-
-  //     expect(res.statusCode).toBe(400)
-  //   })
-
-    // it('should return status 200 if it correctly updates the sent properties',async () => {
-    //   await Character.create(testCharacter1);
-    //   const res = await request(server).patch('/characters?id=1')
-    //   .send({name:'Goofy'});
-    //   expect(res.statusCode).toBe(200);
-    //   const character = Character.findByPk(1)
-    //   expect(character.name).toBe('Goofy')
-    // })
-  // })
 
   afterAll(async () => {
     await sequelize.sync({ force: true });
