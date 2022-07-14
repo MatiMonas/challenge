@@ -1,8 +1,15 @@
 import { NextFunction, Request, Response } from 'express';
 import db from '../../db';
 import { character } from '../../common/interfaces';
+import { Op } from 'sequelize';
 
 const { Character, Movie } = db;
+
+interface ICharacterWhere {
+  name?: { [Op.iLike]: string };
+  age?: number;
+  movies?: number[];
+}
 
 export async function getCharactersController(
   req: Request,
@@ -10,20 +17,45 @@ export async function getCharactersController(
   next: NextFunction,
 ) {
   try {
-    let { id } = req.query;
+    let { id, name, age, movies } = req.query;
 
-    id = parseInt(id);
+    id = parseInt(id) as number;
+    age = parseInt(age) as number;
+    let arrOfMoviesIds = movies && movies.split(',').map(Number);
+
+    const where: ICharacterWhere = {};
+
+    if (name) where.name = { [Op.iLike]: `%${name}%` };
+    if (age) where.age = age;
+
     if (!id) {
-      const characters = await Character.findAll({
+      const querySearch = {
+        where,
         attributes: ['id', 'name', 'image'],
-      });
+        include: arrOfMoviesIds?.length
+          ? {
+              model: Movie,
+              as: 'movies',
+              attributes: ['id', 'title'],
+              through: { attributes: [] },
+              where: {
+                id: {
+                  [Op.in]: arrOfMoviesIds,
+                },
+              },
+            }
+          : [],
+      };
+      const characters = await Character.findAll(querySearch);
 
       if (!characters.length) {
         return res.status(404).send({
           message: 'character/s not found',
         });
       }
-      return res.status(200).json(characters);
+      return res
+        .status(200)
+        .json(characters.length > 1 ? characters : characters[0]);
     }
 
     if (isNaN(id)) {
@@ -45,6 +77,7 @@ export async function getCharactersController(
 
     return res.status(200).json(character);
   } catch (err) {
+    console.log(err);
     next(err);
   }
 }
@@ -54,31 +87,35 @@ export async function createCharacterController(
   res: Response,
   next: NextFunction,
 ) {
-  let { name, age, weight, history, image, movieId } = req.body;
+  try {
+    let { name, age, weight, history, image, movies } = req.body;
 
-  let moviesIds = movieId?.map((ids: string) =>
-    parseInt(ids) ? parseInt(ids) : false,
-  );
-  if (!name || !age || !weight || !moviesIds[0]) {
-    return res.status(400).send('Missing required parameters');
+    let moviesIds = movies?.map((ids: string) =>
+      parseInt(ids) ? parseInt(ids) : false,
+    );
+    if (!name || !age || !weight || !moviesIds[0]) {
+      return res.status(400).send('Missing required parameters');
+    }
+
+    Character.create({
+      name,
+      age,
+      weight,
+      history,
+      image,
+    })
+      .then((response: Response) => {
+        return response.addMovies(moviesIds);
+      })
+      .then(() => {
+        return res.status(201).send('character created successfully');
+      })
+      .catch((err) => {
+        next(err);
+      });
+  } catch (err) {
+    next(err);
   }
-
-  Character.create({
-    name,
-    age,
-    weight,
-    history,
-    image,
-  })
-    .then((response: Response) => {
-      return response.addMovies(moviesIds);
-    })
-    .then(() => {
-      return res.status(201).send('character created successfully');
-    })
-    .catch((err) => {
-      next(err);
-    });
 }
 
 export async function deleteCharacterController(
