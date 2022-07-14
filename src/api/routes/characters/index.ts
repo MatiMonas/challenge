@@ -3,7 +3,7 @@ import {
   getCharactersController,
   createCharacterController,
   deleteCharacterController,
-  patchCharacterController
+  patchCharacterController,
 } from '../../controllers/characters';
 const router = Router()
   /**
@@ -19,7 +19,7 @@ const router = Router()
    *         description: Character id to get the details of a character. Id is not required.
    *         required: false
    *         schema:
-   *          type: number 
+   *          type: number
    *     responses:
    *       200:
    *         description: Return an array of characters with their id, name and image.
@@ -36,7 +36,7 @@ const router = Router()
    *       - Character Routes
    *     parameters:
    *       - in: body
-   *         name: 
+   *         name:
    *          character
    *         description: Character object
    *         schema:
@@ -57,7 +57,7 @@ const router = Router()
    *              type: number
    *              example: 40
    *            image:
-   *              type: string 
+   *              type: string
    *              example: https://sm.ign.com/ign_es/screenshot/default/11112_uq7s.jpg
    *            history:
    *             type: string
@@ -66,7 +66,7 @@ const router = Router()
    *             type: array
    *             items:
    *              type: integer
-   *              example: 1          
+   *              example: 1
    *     responses:
    *       201:
    *         description: Created
@@ -75,70 +75,72 @@ const router = Router()
 
   /**
    * @openapi
-   * /characters/{id}:
+   * /characters:
    *   delete:
    *    summary: Deletes a character
    *    tags:
    *      - Character Routes
    *    parameters:
-   *      - in: path
-   *        name: id
-   *        description: Character id
-   *        required: true
-   *        schema:
-   *          type: number    
-   *    responses:
-   *      200:
-   *        description: Deleted
-   *        content: {}
-   */
-  .delete('/character/:id', deleteCharacterController)
-  
-  /**
-   * @openapi
-   * /characters/{id}:
-   *   patch:
-   *    summary: Updates some propertie of a character
-   *    tags:
-   *      - Character Routes
-   *    parameters:
-   *      - in: path
+   *      - in: query
    *        name: id
    *        description: Character id
    *        required: true
    *        schema:
    *          type: number
-   *      - in: body
-   *        name: character
-   *        description: Character object
-   *        schema:
-   *          type: object
-   *          properties:
-   *            name:
-   *              type: string
-   *              example: Mickey
-   *              required: true
-   *            age:
-   *              type: number
-   *              example: 15
-   *              required: true
-   *            weight:
-   *              type: number
-   *              example: 40
-   *            image:
-   *              type: string 
-   *              example: https://sm.ign.com/ign_es/screenshot/default/11112_uq7s.jpg
-   *            history:
-   *             type: string
-   *             example: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-   *    description: Endpoint for template deletion
    *    responses:
    *      200:
    *        description: Deleted
    *        content: {}
    */
-  .patch('/character/:id', patchCharacterController)
+  .delete('/', deleteCharacterController)
 
-  
+  /**
+   * @openapi
+   * /characters:
+   *    patch:
+   *     summary: Updates some propertie of a character
+   *     tags:
+   *       - Character Routes
+   *     parameters:
+   *       - in: query
+   *         name: id
+   *         description: Character id
+   *         required: true
+   *         schema:
+   *          type: number
+   *       - in: body
+   *         name: character
+   *         description: Character object
+   *         schema:
+   *          type: object
+   *          properties:
+   *            age:
+   *              required: false
+   *              type: number
+   *              example: 15
+   *            weight:
+   *              required: false
+   *              type: number
+   *              example: 40
+   *            image:
+   *              required: false
+   *              type: string
+   *              example: https://sm.ign.com/ign_es/screenshot/default/11112_uq7s.jpg
+   *            history:
+   *              required: false
+   *              type: string
+   *              example: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+   *            movies:
+   *              required: false
+   *              type: array
+   *              items:
+   *               type: integer
+   *               example: 1
+   *    responses:
+   *      204:
+   *        description: Endopoint to update a character
+   *        content: {}
+   */
+  .patch('/', patchCharacterController);
 
 export default router;
