@@ -58,15 +58,27 @@ export async function authLoginController(
   try {
     const { email, password } = req.body;
 
+    if (!email || !password) {
+      return res.status(400).json({
+        message: 'Email and password are required',
+      });
+    }
+
     const user = await User.findOne({
       where: {
         email,
       },
     });
 
+    if (!user) {
+      return res.status(400).json({
+        message: 'no user with this email found',
+      });
+    }
+
     const checkPassword = await bcrypt.compare(password, user.password);
 
-    if (!user || !checkPassword) {
+    if (!checkPassword) {
       return res.status(400).json({
         message: 'email or password is incorrect',
       });
