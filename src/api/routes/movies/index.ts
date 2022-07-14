@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { movieCreatorController, movieGetController } from '../../controllers/movies';
+import { movieCreatorController, movieGetController , deleteMovieController} from '../../controllers/movies';
 
 const router = Router()
 /**
@@ -82,6 +82,26 @@ const router = Router()
    *       201:
    *         description: Created
    */
-  .post('/', movieCreatorController);
+  .post('/', movieCreatorController)
+    /**
+   * @openapi
+   * /movies:
+   *   delete:
+   *    summary: Deletes a movie
+   *    tags:
+   *      - Movies Routes
+   *    parameters:
+   *      - in: query
+   *        name: id
+   *        description: Movie id
+   *        required: true
+   *        schema:
+   *          type: number
+   *    responses:
+   *      200:
+   *        description: Deleted
+   *        content: {}
+   */
+     .delete('/', deleteMovieController)
  
 export default router;
