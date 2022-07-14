@@ -6,7 +6,7 @@ module.exports = (sequelize) => {
     'Movies',
     {
       image: {
-        type: DataTypes.BLOB(),
+        type: DataTypes.STRING,
         allowNull: true,
       },
       title: {
