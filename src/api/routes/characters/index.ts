@@ -98,7 +98,7 @@ const router = Router()
    * @openapi
    * /characters:
    *    patch:
-   *     summary: Updates some propertie of a character
+   *     summary: Updates character properties
    *     tags:
    *       - Character Routes
    *     parameters:
