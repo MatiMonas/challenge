@@ -1,8 +1,13 @@
 import { Router } from 'express';
-import { movieCreatorController, movieGetController , deleteMovieController} from '../../controllers/movies';
+import {
+  movieCreatorController,
+  movieGetController,
+  deleteMovieController,
+  patchMovieController,
+} from '../../controllers/movies';
 
 const router = Router()
-/**
+  /**
    * @openapi
    * /movies:
    *    get:
@@ -15,42 +20,42 @@ const router = Router()
    *         description: Movie id to get the details of a movie. .
    *         required: false
    *         schema:
-   *          type: number 
+   *          type: number
    *       - in: query
    *         name: title
    *         description: Search movie by title.
    *         required: false
    *         schema:
-   *          type: string 
+   *          type: string
    *       - in: query
    *         name: genre
    *         description: Search movie by genreId.
    *         required: false
    *         schema:
-   *          type: number 
+   *          type: number
    *       - in: query
    *         name: orderBy
    *         description: Orders movies by rating.
    *         required: false
    *         schema:
-   *          type: string 
+   *          type: string
    *     responses:
    *       200:
    *         description: Return an array of characters with their id, name and image.
    *         content: {}
    */
- .get('/', movieGetController)
- 
+  .get('/', movieGetController)
+
   /**
    * @openapi
    * /movies:
    *   post:
    *     summary: Creates a new movie
-   *     tags: 
+   *     tags:
    *       - Movies Routes
    *     parameters:
    *       - in: body
-   *         name: 
+   *         name:
    *          movies
    *         description: Movies object
    *         schema:
@@ -83,7 +88,7 @@ const router = Router()
    *         description: Created
    */
   .post('/', movieCreatorController)
-    /**
+  /**
    * @openapi
    * /movies:
    *   delete:
@@ -102,6 +107,41 @@ const router = Router()
    *        description: Deleted
    *        content: {}
    */
-     .delete('/', deleteMovieController)
- 
+  .delete('/', deleteMovieController)
+
+  /**
+   * @openapi
+   * /movies:
+   *    patch:
+   *     summary: Updates movies properties
+   *     tags:
+   *       - Movies Routes
+   *     parameters:
+   *       - in: query
+   *         name: id
+   *         description: Movie id
+   *         required: true
+   *         schema:
+   *          type: number
+   *       - in: body
+   *         name: character
+   *         description: Character object
+   *         schema:
+   *          type: object
+   *          properties:
+   *            raing:
+   *              required: false
+   *              type: number
+   *              example: 5
+   *            image:
+   *              required: false
+   *              type: string
+   *              example: https://pics.filmaffinity.com/Mulan-247098384-large.jpg
+   *    responses:
+   *      204:
+   *        description: Endopoint to update a character
+   *        content: {}
+   */
+  .patch('/', patchMovieController);
+
 export default router;
