@@ -8,6 +8,7 @@ interface ICharacterWhere {
   name?: { [Op.iLike]: string };
   age?: number;
   movies?: number[];
+  weight?: number;
 }
 
 interface IUpdateObject {
@@ -23,14 +24,16 @@ export async function getCharactersController(
   next: NextFunction,
 ) {
   try {
-    let { id, name, age, movies } = req.query;
+    let { id, name, age, movies, weight } = req.query;
     const where: ICharacterWhere = {};
     let parsedId: number | undefined;
     let parsedAge: number | undefined;
+    let parsedWeight: number | undefined;
     let arrOfMoviesIds: number[] | undefined;
 
     parsedId = Number(id);
     parsedAge = Number(age);
+    parsedWeight = Number(weight);
 
     arrOfMoviesIds = movies
       ? (movies as string).split(',').map(Number)
@@ -38,6 +41,7 @@ export async function getCharactersController(
 
     if (name) where.name = { [Op.iLike]: `%${name}%` };
     if (age) where.age = parsedAge;
+    if (weight) where.weight = parsedWeight;
 
     if (!parsedId) {
       const querySearch = {
@@ -109,19 +113,21 @@ export async function createCharacterController(
     let arrOfMoviesIds: (number | false)[] | undefined;
 
     name = req.body.name;
-    age = Number(parseInt(req.body.age));
-    weight = Number(parseInt(req.body.weight));
+    age = Number(req.body.age);
+    weight = Number(req.body.weight);
     history = req.body.history;
     image = req.body.image;
     arrOfMoviesIds = movies?.map((ids: string) =>
       parseInt(ids) ? Number(parseInt(ids)) : false,
     );
 
-    if (!name || !age || !weight || !(arrOfMoviesIds && arrOfMoviesIds[0])) {
+    if (!name || !(arrOfMoviesIds && arrOfMoviesIds[0])) {
       return res.status(400).send('Missing required parameters');
     }
 
     if (isNaN(age) || isNaN(weight)) {
+      console.log('entre');
+
       return res.status(400).json({
         message: 'age and weight must be an integer number',
       });
@@ -167,13 +173,9 @@ export async function deleteCharacterController(
 
     parsedId = Number(id);
 
-    if (!parsedId) {
-      return res.status(400).json({ message: 'missing required parameters' });
-    }
-
     if (!/^[0-9]*$/.test(String(parsedId))) {
       return res.status(400).json({
-        message: 'id must be an integer number',
+        message: 'id is required and must be an integer number ',
       });
     }
 
@@ -219,12 +221,9 @@ export async function patchCharacterController(
       ? movies?.map((ids: string) => (parseInt(ids) ? parseInt(ids) : false))
       : undefined;
 
-    if (!parsedId) {
-      return res.status(400).json({ message: 'missing id' });
-    }
     if (!/^[0-9]*$/.test(String(parsedId))) {
       return res.status(400).json({
-        message: 'id must be an integer number',
+        message: 'id is required and must be an integer number ',
       });
     }
 
