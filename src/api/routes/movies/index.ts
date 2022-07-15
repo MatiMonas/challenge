@@ -36,7 +36,7 @@ const router = Router()
    *          type: number
    *       - in: query
    *         name: orderBy
-   *         description: Orders movies by rating.
+   *         description: Orders movies by rating. ASC or DESC.
    *         required: false
    *         schema:
    *          type: string
