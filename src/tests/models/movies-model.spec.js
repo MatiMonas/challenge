@@ -32,7 +32,16 @@ describe('Movie Model', () => {
     it('should not create the Movie if releaseDate is not sent', async () => {
       expect.assertions(1);
       try {
-        await Movie.create({ title: 'Aladdin' });
+        await Movie.create({ title: 'Aladdin', rating: 5 });
+      } catch (error) {
+        expect(error.message).toBeDefined();
+      }
+    });
+
+    it('should not create the Movie if rating is not sent', async () => {
+      expect.assertions(1);
+      try {
+        await Movie.create({ title: 'Aladdin', releaseDate: Date.now() });
       } catch (error) {
         expect(error.message).toBeDefined();
       }
@@ -69,10 +78,11 @@ describe('Movie Model', () => {
         const testMovie = await Movie.create({
           title: 'Aladdin',
           releaseDate: date,
+          rating: 5,
         });
         expect(testMovie.toJSON()).toHaveProperty('title', 'Aladdin');
         expect(testMovie.toJSON()).toHaveProperty('releaseDate', date);
-        expect(testMovie.toJSON()).toHaveProperty('rating', null);
+        expect(testMovie.toJSON()).toHaveProperty('rating', 5);
         expect(testMovie.toJSON()).toHaveProperty('image', null);
       } catch (error) {
         expect(error.message).toBeDefined();
