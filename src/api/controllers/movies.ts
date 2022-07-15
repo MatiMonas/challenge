@@ -90,9 +90,9 @@ export async function movieCreatorController(
     rating = Number(req.body.rating);
     genreId = Number(req.body.genreId);
 
-    if (!title || !releaseDate || !genreId) {
+    if (!title || !releaseDate) {
       return res.status(400).send({
-        message: 'Missing required parameters',
+        message: 'missing required parameters',
       });
     }
 
@@ -125,15 +125,9 @@ export async function deleteMovieController(
 
     parsedId = Number(id);
 
-    if (!parsedId) {
-      return res.status(400).send({
-        message: 'missing required parameters',
-      });
-    }
-
     if (isNaN(parsedId)) {
       return res.status(400).send({
-        message: 'id must be an integer number',
+        message: 'id is required and must be an integer number',
       });
     }
 
@@ -160,30 +154,32 @@ export async function patchMovieController(
   next: NextFunction,
 ) {
   try {
-    const { id, rating } = req.query;
+    const { id } = req.query;
 
     let parsedId: number | undefined;
     let parsedRating: number | undefined;
     let image: string | undefined;
+    let rating: number | undefined;
 
-    parsedId = Number(id);
+    rating = req.body.rating;
     parsedRating = Number(rating);
+    parsedId = Number(id);
     image = req.body.image;
 
-    if (!parsedId) {
+    if (isNaN(parsedId)) {
       return res.status(400).send({
-        message: 'missing id',
-      });
-    }
-
-    if (isNaN(parsedId) || isNaN(parsedRating)) {
-      return res.status(400).send({
-        message: 'id and rating must be integers',
+        message: 'id is required and it must be an integer number',
       });
     }
 
     if (!rating && !image) {
       return res.status(400).json({ message: 'missing required parameters' });
+    }
+
+    if (isNaN(parsedRating)) {
+      return res.status(400).send({
+        message: 'rating must be an integer number',
+      });
     }
 
     const movie = await Movie.findByPk(parsedId);
@@ -194,7 +190,7 @@ export async function patchMovieController(
       });
     }
 
-    if (rating) movie.rating = rating;
+    if (parsedRating) movie.rating = parsedRating;
     if (image) movie.image = image;
 
     await movie.save();
