@@ -24,7 +24,7 @@ export async function movieGetController(
     parsedId = Number(id);
     parsedGenreId = Number(genre);
     title = req.query.title as string;
-    orderBy = req.query.orderBy as string;
+    orderBy = req.query.order as string;
 
     const where: IMoviesWhere = {};
 
@@ -102,7 +102,6 @@ export async function movieCreatorController(
       });
     }
 
-    
     const [movie, created] = await Movie.findOrCreate({
       where: { title },
       defaults: { releaseDate, rating, image },
