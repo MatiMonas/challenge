@@ -143,12 +143,7 @@ export async function createCharacterController(
       where: {
         name,
       },
-      defaults: {
-        age,
-        weight,
-        history,
-        image,
-      },
+      defaults: { age, weight, history, image },
     });
 
     if (!created) {
