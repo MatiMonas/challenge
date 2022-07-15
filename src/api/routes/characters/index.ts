@@ -35,7 +35,7 @@ const router = Router()
    *          type: number
    *       - in: query
    *         name: weight
-   *         description: Search by character age.
+   *         description: Search by character weight.
    *         required: false
    *         schema:
    *          type: number
