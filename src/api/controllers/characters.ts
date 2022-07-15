@@ -139,24 +139,29 @@ export async function createCharacterController(
       });
     }
 
-    Character.create({
-      name,
-      age,
-      weight,
-      history,
-      image,
-    })
-      .then((response: typeof Character) => {
-        return response.addMovies(arrOfMoviesIds);
-      })
-      .then(() => {
-        return res.status(201).send('character created successfully');
-      })
-      .catch((err: typeof Error) => {
-        console.log(err);
+    const [character, created] = await Character.findOrCreate({
+      where: {
+        name,
+      },
+      defaults: {
+        age,
+        weight,
+        history,
+        image,
+      },
+    });
 
-        next(err);
+    if (!created) {
+      return res.status(400).json({
+        message: 'character already exists',
       });
+    }
+
+    await character.addMovies(arrOfMoviesIds);
+
+    return res.status(201).json({
+      message: 'character created sucessfully',
+    });
   } catch (err) {
     next(err);
   }
