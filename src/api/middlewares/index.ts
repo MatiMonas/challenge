@@ -28,9 +28,13 @@ export function checkJWT(req: Request, res: Response, next: NextFunction) {
         message: 'No token provided',
       });
     }
+    const splittedToken = authorizationToken.split(' ');
+
+    let token =
+      splittedToken.length > 1 ? splittedToken[1] : authorizationToken;
 
     //@ts-ignore
-    let decodedToken = jwt.verify(authorizationToken, TOKEN_SECRET);
+    let decodedToken = jwt.verify(token, TOKEN_SECRET);
 
     //@ts-ignore
     req.user = decodedToken;
