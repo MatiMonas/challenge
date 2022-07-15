@@ -102,11 +102,21 @@ export async function movieCreatorController(
       });
     }
 
-    const movie = await Movie.create({ title, releaseDate, rating, image });
+    
+    const [movie, created] = await Movie.findOrCreate({
+      where: { title },
+      defaults: { releaseDate, rating, image },
+    });
+
+    if (!created) {
+      return res.status(409).send({
+        message: 'movie already exists',
+      });
+    }
 
     await movie.setGenre(genreId);
 
-    return res.status(201).json({ message: 'Movie created' });
+    return res.status(201).json({ message: 'movie created' });
   } catch (err) {
     console.log(err);
 
