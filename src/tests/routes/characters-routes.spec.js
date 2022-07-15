@@ -1,4 +1,5 @@
 const db = require('../../db');
+const { generateAccessToken } = require('../../common/jwt');
 const request = require('supertest');
 const { server } = require('../../api');
 const sequelize = db.default.sequelize;
@@ -22,10 +23,22 @@ const testCharacter2 = {
   history: 'lorem ipsum',
   movies: [1],
 };
-
+let token = '';
 describe('Characters Routes', () => {
   beforeAll(async () => {
     await sequelize.sync({ force: true });
+    await request(server).post('/auth/register').send({
+      email: 'prueba@prueba.com',
+      password: '12345',
+    });
+
+    const response = await request(server).post('/auth/login').send({
+      email: 'prueba@prueba.com',
+      password: '12345',
+    });
+
+    token = response.body.accessToken;
+
     await Genre.bulkCreate([{ name: 'Action' }, { name: 'Drama' }]);
     await Movie.create({
       title: 'Mulan',
@@ -38,7 +51,10 @@ describe('Characters Routes', () => {
 
   describe('POST', () => {
     it('should return status 400 and corresponding text if any of the mandatory parameters are missing', async () => {
-      const res = await request(server).post('/characters');
+      const res = await request(server)
+        .post('/characters')
+        .set({ Authorization: `Bearer ${token}` });
+
       expect(res.statusCode).toBe(400);
       expect(res.text).toBe('Missing required parameters');
     });
@@ -53,7 +69,8 @@ describe('Characters Routes', () => {
           weight: '40sd2',
           history: 'lorem ipsum',
           movies: [1],
-        });
+        })
+        .set({ Authorization: `Bearer ${token}` })
       expect(res.statusCode).toBe(400);
       expect(res.body).toEqual({
         message: 'age and weight must be an integer number',
@@ -61,15 +78,12 @@ describe('Characters Routes', () => {
     });
 
     it('should return status 201 if the character was succesfully created', async () => {
-      try {
-        const res = await request(server)
-          .post('/characters')
-          .send(testCharacter1);
-        expect(res.statusCode).toBe(201);
-        expect(res.text).toBe('character created successfully');
-      } catch (err) {
-        console.log(err);
-      }
+      const res = await request(server)
+        .post('/characters')
+        .set({ Authorization: `Bearer ${token}` })
+        .send(testCharacter1);
+      expect(res.statusCode).toBe(201);
+      expect(res.text).toBe('character created successfully');
     });
   });
 
@@ -125,24 +139,32 @@ describe('Characters Routes', () => {
     });
     describe('DELETE', () => {
       it('should return 400 if the id was not sent', async () => {
-        const res = await request(server).delete('/characters');
+        const res = await request(server)
+          .delete('/characters')
+          .set({ Authorization: `Bearer ${token}` });
         expect(res.statusCode).toBe(400);
-        expect(res.body).toEqual({ message: 'missing required parameters' });
+        expect(res.body).toEqual({ message: 'id is required and must be an integer number ', });
       });
       it('should return 400 if the id is not a number and a message to the user', async () => {
-        const res = await request(server).delete('/characters?id=1a');
+        const res = await request(server)
+          .delete('/characters?id=1a')
+          .set({ Authorization: `Bearer ${token}` });
         expect(res.statusCode).toBe(400);
-        expect(res.body).toEqual({ message: 'id must be an integer number' });
+        expect(res.body).toEqual({message: 'id is required and must be an integer number ',});
       });
 
       it('should return 404 if the character to delete does not exist', async () => {
-        const res = await request(server).delete('/characters?id=5');
+        const res = await request(server)
+          .delete('/characters?id=5')
+          .set({ Authorization: `Bearer ${token}` });
         expect(res.statusCode).toBe(404);
         expect(res.body).toEqual({ message: 'character not found' });
       });
 
       it('should return status 200 and correctly delete a characacter', async () => {
-        const res = await request(server).delete('/characters?id=1');
+        const res = await request(server)
+          .delete('/characters?id=1')
+          .set({ Authorization: `Bearer ${token}` });
         const character = await Character.findByPk(1);
         expect(character).toBe(null);
         expect(res.statusCode).toBe(200);
@@ -152,26 +174,33 @@ describe('Characters Routes', () => {
 
     describe('PATCH', () => {
       it('should return status 400 if the id was not sent', async () => {
-        const res = await request(server).patch('/characters');
+        const res = await request(server)
+          .patch('/characters')
+          .set({ Authorization: `Bearer ${token}` });
         expect(res.statusCode).toBe(400);
-        expect(res.body).toEqual({ message: 'missing id' });
+        expect(res.body).toEqual({  message: 'id is required and must be an integer number ',});
       });
 
       it('should return status 400 if the no required parameter to update was sent', async () => {
-        const res = await request(server).patch('/characters?id=2');
+        const res = await request(server)
+          .patch('/characters?id=2')
+          .set({ Authorization: `Bearer ${token}` });
         expect(res.statusCode).toBe(400);
         expect(res.body).toEqual({ message: 'missing required parameters' });
       });
 
       it('should return 400 if the id is not a number and a message to the user', async () => {
-        const res = await request(server).patch('/characters?id=1a');
+        const res = await request(server)
+          .patch('/characters?id=1a')
+          .set({ Authorization: `Bearer ${token}` });
         expect(res.statusCode).toBe(400);
-        expect(res.body).toEqual({ message: 'id must be an integer number' });
+        expect(res.body).toEqual({  message: 'id is required and must be an integer number ', });
       });
 
       it('should return 404 if the character to delete does not exist', async () => {
         const res = await request(server)
           .patch('/characters?id=5')
+          .set({ Authorization: `Bearer ${token}` })
           .send({ age: 10 });
         expect(res.statusCode).toBe(404);
         expect(res.body).toEqual({ message: 'character not found' });
@@ -180,6 +209,7 @@ describe('Characters Routes', () => {
       it('should send status 204 if the character was updated', async () => {
         const res = await request(server)
           .patch('/characters?id=2')
+          .set({ Authorization: `Bearer ${token}` })
           .send({
             age: 20,
             weight: 30,
