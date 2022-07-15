@@ -83,7 +83,7 @@ describe('Characters Routes', () => {
         .set({ Authorization: `Bearer ${token}` })
         .send(testCharacter1);
       expect(res.statusCode).toBe(201);
-      expect(res.text).toBe('character created successfully');
+      expect(res.body).toEqual({ message: 'character created sucessfully' });
     });
   });
 

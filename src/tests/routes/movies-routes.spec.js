@@ -72,7 +72,7 @@ describe('Movies Routes', () => {
         .set({ Authorization: `Bearer ${token}` })
         .send(movie1);
       expect(res.statusCode).toBe(201);
-      expect(res.body).toEqual({ message: 'Movie created' });
+      expect(res.body).toEqual({ message: 'movie created' });
     });
   });
   describe('Multiple Routes', () => {
@@ -112,7 +112,6 @@ describe('Movies Routes', () => {
           },
         ]);
       });
-
       it('should return status 200 and all the details of a movie if an id is sent by query', async () => {
         const res = await request(server).get('/movies?id=1');
         expect(res.statusCode).toBe(200);
@@ -121,7 +120,7 @@ describe('Movies Routes', () => {
           title: 'Mulan',
           releaseDate: '2022-01-17',
           image: 'https://pics.filmaffinity.com/Mulan-247098384-large.jpg',
-          rating: '5',
+          rating: 5,
           genreId: 1,
           characters: [{ id: 1, name: 'Donald' }],
         });
@@ -133,7 +132,9 @@ describe('Movies Routes', () => {
           .delete('/movies')
           .set({ Authorization: `Bearer ${token}` });
         expect(res.statusCode).toBe(400);
-        expect(res.body).toEqual({ message: 'id is required and must be an integer number', });
+        expect(res.body).toEqual({
+          message: 'id is required and must be an integer number',
+        });
       });
 
       it('should return 400 if the id is not a number and a message to the user', async () => {
@@ -146,21 +147,21 @@ describe('Movies Routes', () => {
         });
       });
 
-        it('should return 404 if the movie to delete does not exist', async () => {
-          const res = await request(server)
-            .delete('/movies?id=5')
-            .set({ Authorization: `Bearer ${token}` });
-          expect(res.statusCode).toBe(404);
-          expect(res.body).toEqual({ message: 'movie not found' });
-        });
+      it('should return 404 if the movie to delete does not exist', async () => {
+        const res = await request(server)
+          .delete('/movies?id=5')
+          .set({ Authorization: `Bearer ${token}` });
+        expect(res.statusCode).toBe(404);
+        expect(res.body).toEqual({ message: 'movie not found' });
+      });
 
-        it('should return status 200 and correctly delete a characacter', async () => {
-          const res = await request(server)
-            .delete('/movies?id=1')
-            .set({ Authorization: `Bearer ${token}` });
-          expect(res.statusCode).toBe(200);
-          expect(res.body).toEqual({ message: 'movie deleted successfully' });
-        });
+      it('should return status 200 and correctly delete a characacter', async () => {
+        const res = await request(server)
+          .delete('/movies?id=1')
+          .set({ Authorization: `Bearer ${token}` });
+        expect(res.statusCode).toBe(200);
+        expect(res.body).toEqual({ message: 'movie deleted successfully' });
+      });
     });
 
     describe('PATCH', () => {
@@ -169,7 +170,9 @@ describe('Movies Routes', () => {
           .patch('/movies')
           .set({ Authorization: `Bearer ${token}` });
         expect(res.statusCode).toBe(400);
-        expect(res.body).toEqual({ message: 'id is required and it must be an integer number',});
+        expect(res.body).toEqual({
+          message: 'id is required and it must be an integer number',
+        });
       });
 
       it('should return status 400 if the no required parameter to update was sent', async () => {
@@ -184,7 +187,7 @@ describe('Movies Routes', () => {
         const res = await request(server)
           .patch('/movies?id=1')
           .set({ Authorization: `Bearer ${token}` })
-          .send({rating: '23ka0', image:'aa'})
+          .send({ rating: '23ka0', image: 'aa' });
         expect(res.statusCode).toBe(400);
         expect(res.body).toEqual({
           message: 'rating must be an integer number',
