@@ -87,7 +87,7 @@ describe('Characters Routes', () => {
     });
   });
 
-  describe('Multiple Routes', () => {
+  describe('Multiple Routes /characters', () => {
     beforeAll(async () => {
       try {
         await Character.create(testCharacter2);

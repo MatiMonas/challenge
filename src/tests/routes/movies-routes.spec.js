@@ -75,7 +75,7 @@ describe('Movies Routes', () => {
       expect(res.body).toEqual({ message: 'movie created' });
     });
   });
-  describe('Multiple Routes', () => {
+  describe('Multiple Routes /movies', () => {
     beforeAll(async () => {
       try {
         await Movie.create(movie2);
