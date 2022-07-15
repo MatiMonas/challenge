@@ -34,6 +34,12 @@ const router = Router()
    *         schema:
    *          type: number
    *       - in: query
+   *         name: weight
+   *         description: Search by character age.
+   *         required: false
+   *         schema:
+   *          type: number
+   *       - in: query
    *         name: movies
    *         description: Search by multiple movies. Example 'movies=1,2,3,4'
    *         required: false
