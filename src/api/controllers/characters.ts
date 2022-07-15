@@ -70,7 +70,7 @@ export async function getCharactersController(
       }
       return res
         .status(200)
-        .json(characters.length > 1 ? characters : characters[0]);
+        .json(characters);
     }
 
     if (isNaN(parsedId)) {
@@ -126,8 +126,6 @@ export async function createCharacterController(
     }
 
     if (isNaN(age) || isNaN(weight)) {
-      console.log('entre');
-
       return res.status(400).json({
         message: 'age and weight must be an integer number',
       });
