@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 import { generateAccessToken } from '../../common/jwt';
-import { hashPassword } from '../../common/utils';
 import db from '../../db';
 import bcrypt from 'bcryptjs';
+import { sendMailToNewUsers } from '../../common/nodemailer';
 const { User } = db;
 
 export async function authRegisterController(
@@ -41,7 +41,8 @@ export async function authRegisterController(
         message: 'user already exists',
       });
     }
-    await User.create(user);
+    const newUser = await User.create(user);
+    sendMailToNewUsers(newUser.email);
     return res.status(201).json({
       message: 'user created',
     });
