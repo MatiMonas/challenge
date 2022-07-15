@@ -70,7 +70,7 @@ describe('Characters Routes', () => {
           history: 'lorem ipsum',
           movies: [1],
         })
-        .set({ Authorization: `Bearer ${token}` })
+        .set({ Authorization: `Bearer ${token}` });
       expect(res.statusCode).toBe(400);
       expect(res.body).toEqual({
         message: 'age and weight must be an integer number',
@@ -143,14 +143,18 @@ describe('Characters Routes', () => {
           .delete('/characters')
           .set({ Authorization: `Bearer ${token}` });
         expect(res.statusCode).toBe(400);
-        expect(res.body).toEqual({ message: 'id is required and must be an integer number ', });
+        expect(res.body).toEqual({
+          message: 'id is required and must be an integer number ',
+        });
       });
       it('should return 400 if the id is not a number and a message to the user', async () => {
         const res = await request(server)
           .delete('/characters?id=1a')
           .set({ Authorization: `Bearer ${token}` });
         expect(res.statusCode).toBe(400);
-        expect(res.body).toEqual({message: 'id is required and must be an integer number ',});
+        expect(res.body).toEqual({
+          message: 'id is required and must be an integer number ',
+        });
       });
 
       it('should return 404 if the character to delete does not exist', async () => {
@@ -178,7 +182,9 @@ describe('Characters Routes', () => {
           .patch('/characters')
           .set({ Authorization: `Bearer ${token}` });
         expect(res.statusCode).toBe(400);
-        expect(res.body).toEqual({  message: 'id is required and must be an integer number ',});
+        expect(res.body).toEqual({
+          message: 'id is required and must be an integer number ',
+        });
       });
 
       it('should return status 400 if the no required parameter to update was sent', async () => {
@@ -194,7 +200,9 @@ describe('Characters Routes', () => {
           .patch('/characters?id=1a')
           .set({ Authorization: `Bearer ${token}` });
         expect(res.statusCode).toBe(400);
-        expect(res.body).toEqual({  message: 'id is required and must be an integer number ', });
+        expect(res.body).toEqual({
+          message: 'id is required and must be an integer number ',
+        });
       });
 
       it('should return 404 if the character to delete does not exist', async () => {
