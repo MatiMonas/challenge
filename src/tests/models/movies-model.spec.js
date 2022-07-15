@@ -23,8 +23,8 @@ describe('Movie Model', () => {
     it('should not create two Movies with the same name', async () => {
       expect.assertions(1);
       try {
-        await Genre.create({ title: 'Aladdin' , releaseDate: Date.now()});
-        await Genre.create({ title: 'Aladdin' , releaseDate: Date.now()});
+        await Genre.create({ title: 'Aladdin', releaseDate: Date.now() });
+        await Genre.create({ title: 'Aladdin', releaseDate: Date.now() });
       } catch (error) {
         expect(error.message).toBeDefined();
       }
@@ -72,18 +72,33 @@ describe('Movie Model', () => {
     });
 
     it('should  create the Movie if all required properties are okay', async () => {
-      expect.assertions(3);
+      expect.assertions(2);
       try {
-        const date = Date.now();
         const testMovie = await Movie.create({
           title: 'Aladdin',
-          releaseDate: date,
+          releaseDate: Date.now(),
           rating: 5,
         });
         expect(testMovie.toJSON()).toHaveProperty('title', 'Aladdin');
         expect(testMovie.toJSON()).toHaveProperty('releaseDate', date);
         expect(testMovie.toJSON()).toHaveProperty('rating', 5);
         expect(testMovie.toJSON()).toHaveProperty('image', null);
+      } catch (error) {
+        expect(error.message).toBeDefined();
+      }
+    });
+
+    it('should not create the Movie if allready exists', async () => {
+      expect.assertions(1);
+      try {
+        const testMovie = {
+          title: 'Aladdin',
+          releaseDate: Date.now(),
+          rating: 5,
+        };
+
+        await Movie.create(testMovie);
+        await Movie.create(testMovie);
       } catch (error) {
         expect(error.message).toBeDefined();
       }

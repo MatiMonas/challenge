@@ -75,6 +75,15 @@ describe('Character Model', () => {
     }
   });
 
+  it('should not create a Character with age less than 1', async () => {
+    expect.assertions(1);
+    try {
+      await Character.create({ name: 'Mickey', age: 0 });
+    } catch (error) {
+      expect(error.message).toBeDefined();
+    }
+  });
+
   it('should not create a Character with age greater than 99', async () => {
     expect.assertions(1);
     try {
@@ -83,6 +92,7 @@ describe('Character Model', () => {
       expect(error.message).toBeDefined();
     }
   });
+
   it('should create the Character if all required properties are ok', async () => {
     try {
       const testCharacter = await Character.create({
@@ -98,11 +108,15 @@ describe('Character Model', () => {
       expect(error.message).toBeDefined();
     }
   });
-
-  it('should not create a Character with age less than 1', async () => {
-    expect.assertions(1);
+  it('should not create the Character if allready exists', async () => {
     try {
-      await Character.create({ name: 'Mickey', age: 0 });
+      const testCharacter = {
+        name: 'Mickey',
+        age: 15,
+      };
+
+      await Character.create(testCharacter);
+      await Character.create(testCharacter);
     } catch (error) {
       expect(error.message).toBeDefined();
     }
