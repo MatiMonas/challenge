@@ -21,7 +21,7 @@ const testCharacter2 = {
   age: 16,
   weight: 30,
   history: 'lorem ipsum',
-  movies: [1],
+  movies: [1, 2],
 };
 let token = '';
 describe('Characters Routes', () => {
@@ -40,13 +40,22 @@ describe('Characters Routes', () => {
     token = response.body.accessToken;
 
     await Genre.bulkCreate([{ name: 'Action' }, { name: 'Drama' }]);
-    await Movie.create({
-      title: 'Mulan',
-      releaseDate: '2022-01-17',
-      image: 'https://pics.filmaffinity.com/Mulan-247098384-large.jpg',
-      rating: 5,
-      genreId: 1,
-    });
+    await Movie.bulkCreate([
+      {
+        title: 'Mulan',
+        releaseDate: '2022-01-17',
+        image: 'https://pics.filmaffinity.com/Mulan-247098384-large.jpg',
+        rating: 5,
+        genreId: 1,
+      },
+      {
+        title: 'Mulan 2',
+        releaseDate: '2022-01-17',
+        image: 'https://pics.filmaffinity.com/Mulan-247098384-large.jpg',
+        rating: 5,
+        genreId: 2,
+      },
+    ]);
   });
 
   describe('POST', () => {
@@ -84,27 +93,18 @@ describe('Characters Routes', () => {
         .send(testCharacter1);
       expect(res.statusCode).toBe(201);
       expect(res.body).toEqual({ message: 'character created sucessfully' });
+      const res2 = await request(server)
+        .post('/characters')
+        .set({ Authorization: `Bearer ${token}` })
+        .send(testCharacter2);
+      expect(res2.statusCode).toBe(201);
+      expect(res2.body).toEqual({ message: 'character created sucessfully' });
     });
   });
 
-  describe('Multiple Routes /characters', () => {
-    beforeAll(async () => {
-      try {
-        await Character.create(testCharacter2);
-        await Movie.create({
-          title: 'Mulan 2',
-          releaseDate: '2022-01-17',
-          image: 'https://pics.filmaffinity.com/Mulan-247098384-large.jpg',
-          rating: 5,
-          genreId: 2,
-        });
-      } catch (err) {
-        console.log(err);
-      }
-    });
-
+  describe('Multiple Routes', () => {
     describe('GET', () => {
-      it('should return status 200 and the characters list', async () => {
+      it('/characters should return status 200 and the characters list', async () => {
         const res = await request(server).get('/characters');
         expect(res.statusCode).toBe(200);
         expect(res.body).toEqual([
@@ -123,7 +123,7 @@ describe('Characters Routes', () => {
         ]);
       });
 
-      it('should return status 200 and all the details of a character if an id is sent by query', async () => {
+      it('/characters?id={id} should return status 200 and all the details of a character if an id is sent by query', async () => {
         const res = await request(server).get('/characters?id=1');
         expect(res.statusCode).toBe(200);
         expect(res.body).toEqual({
@@ -135,6 +135,105 @@ describe('Characters Routes', () => {
           history: 'lorem ipsum',
           movies: [{ id: 1, title: 'Mulan' }],
         });
+      });
+
+      it('/characters?name={name} should return status 200 and the characters having the name sent by query', async () => {
+        const res = await request(server).get('/characters?name=Donald');
+        expect(res.statusCode).toBe(200);
+        expect(res.body).toEqual([
+          {
+            id: 2,
+            name: 'Donald',
+            image:
+              'https://static.wikia.nocookie.net/disney/images/6/6f/Donald_Duck.png',
+          },
+        ]);
+        const res2 = await request(server).get('/characters?name=Mickey');
+        expect(res2.statusCode).toBe(200);
+        expect(res2.body).toEqual([
+          {
+            id: 1,
+            name: 'Mickey',
+            image:
+              'https://sm.ign.com/ign_es/screenshot/default/11112_uq7s.jpg',
+          },
+        ]);
+      });
+
+      it('/characters?age={age} should return status 200 and the characters having age sent by query', async () => {
+        const res = await request(server).get('/characters?age=16');
+        expect(res.statusCode).toBe(200);
+        expect(res.body).toEqual([
+          {
+            id: 2,
+            name: 'Donald',
+            image:
+              'https://static.wikia.nocookie.net/disney/images/6/6f/Donald_Duck.png',
+          },
+        ]);
+
+        const res2 = await request(server).get('/characters?age=15');
+        expect(res2.statusCode).toBe(200);
+        expect(res2.body).toEqual([
+          {
+            id: 1,
+            name: 'Mickey',
+            image:
+              'https://sm.ign.com/ign_es/screenshot/default/11112_uq7s.jpg',
+          },
+        ]);
+      });
+
+      it('/characters?movies={movies} should return status 200 and the characters having movies sent by query', async () => {
+        const res = await request(server).get('/characters?movies=1,2');
+        expect(res.statusCode).toEqual(200);
+        expect(res.body).toEqual([
+          {
+            id: 1,
+            name: testCharacter1.name,
+            image:
+              'https://sm.ign.com/ign_es/screenshot/default/11112_uq7s.jpg',
+            movies: [
+              {
+                id: 1,
+                title: 'Mulan',
+              },
+            ],
+          },
+          {
+            id: 2,
+            name: testCharacter2.name,
+            image:
+              'https://static.wikia.nocookie.net/disney/images/6/6f/Donald_Duck.png',
+            movies: [
+              {
+                id: 1,
+                title: 'Mulan',
+              },
+              {
+                id: 2,
+                title: 'Mulan 2',
+              },
+            ],
+          },
+        ]);
+
+        const res2 = await request(server).get('/characters?movies=2');
+        expect(res2.statusCode).toBe(200);
+        expect(res2.body).toEqual([
+          {
+            id: 2,
+            name: 'Donald',
+            image:
+              'https://static.wikia.nocookie.net/disney/images/6/6f/Donald_Duck.png',
+            movies: [
+              {
+                id: 2,
+                title: 'Mulan 2',
+              },
+            ],
+          },
+        ]);
       });
     });
     describe('DELETE', () => {

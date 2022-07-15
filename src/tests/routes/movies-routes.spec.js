@@ -18,8 +18,15 @@ const movie2 = {
   title: 'Mulan 2',
   releaseDate: '2022-01-17',
   image: 'https://pics.filmaffinity.com/Mulan-247098384-large.jpg',
-  rating: 5,
+  rating: 4,
   genreId: 1,
+};
+const movie3 = {
+  title: 'La casa de Mickey Mouse',
+  releaseDate: '2022-01-17',
+  image: 'https://pics.filmaffinity.com/Mulan-247098384-large.jpg',
+  rating: 3,
+  genreId: 2,
 };
 
 let token = '';
@@ -79,6 +86,7 @@ describe('Movies Routes', () => {
     beforeAll(async () => {
       try {
         await Movie.create(movie2);
+        await Movie.create(movie3);
         let char = await Character.create({
           name: 'Donald',
           image:
@@ -110,6 +118,12 @@ describe('Movies Routes', () => {
             releaseDate: '2022-01-17',
             image: 'https://pics.filmaffinity.com/Mulan-247098384-large.jpg',
           },
+          {
+            id: 3,
+            title: 'La casa de Mickey Mouse',
+            releaseDate: '2022-01-17',
+            image: 'https://pics.filmaffinity.com/Mulan-247098384-large.jpg',
+          },
         ]);
       });
       it('should return status 200 and all the details of a movie if an id is sent by query', async () => {
@@ -125,6 +139,115 @@ describe('Movies Routes', () => {
           characters: [{ id: 1, name: 'Donald' }],
         });
       });
+
+      it('/movies?title={title} should return status 200 and the movies having the title sent by query', async () => {
+        const res = await request(server).get('/movies?title=Mulan');
+        expect(res.statusCode).toBe(200);
+        expect(res.body).toEqual([
+          {
+            id: 1,
+            title: 'Mulan',
+            image: 'https://pics.filmaffinity.com/Mulan-247098384-large.jpg',
+            releaseDate: '2022-01-17',
+          },
+          {
+            id: 2,
+            title: 'Mulan 2',
+            image: 'https://pics.filmaffinity.com/Mulan-247098384-large.jpg',
+            releaseDate: '2022-01-17',
+          },
+        ]);
+
+        const res2 = await request(server).get('/movies?title=Mickey');
+        expect(res2.statusCode).toBe(200);
+        expect(res2.body).toEqual([
+          {
+            id: 3,
+            title: 'La casa de Mickey Mouse',
+            releaseDate: '2022-01-17',
+            image: 'https://pics.filmaffinity.com/Mulan-247098384-large.jpg',
+          },
+        ]);
+      });
+
+      it('/movies?genre={genreId} should return status 200 and the movies having the rating sent by query', async () => {
+        const res = await request(server).get('/movies?genre=1');
+        expect(res.statusCode).toBe(200);
+        expect(res.body).toEqual([
+          {
+            id: 1,
+            title: 'Mulan',
+            image: 'https://pics.filmaffinity.com/Mulan-247098384-large.jpg',
+            releaseDate: '2022-01-17',
+          },
+          {
+            id: 2,
+            title: 'Mulan 2',
+            image: 'https://pics.filmaffinity.com/Mulan-247098384-large.jpg',
+            releaseDate: '2022-01-17',
+          },
+        ]);
+
+        const res2 = await request(server).get('/movies?genre=2');
+        expect(res2.statusCode).toBe(200);
+        expect(res2.body).toEqual([
+          {
+            id: 3,
+            title: 'La casa de Mickey Mouse',
+            releaseDate: '2022-01-17',
+            image: 'https://pics.filmaffinity.com/Mulan-247098384-large.jpg',
+          },
+        ]);
+      });
+
+      it('/movies?order=ASC|DESC should return 200 and the movies in order by  rating in the order sent by querie', async () => {
+        const res = await request(server).get('/movies?order=DESC');
+        expect(res.statusCode).toBe(200);
+        expect(res.body).toEqual([
+          {
+            id: 1,
+            title: 'Mulan',
+            image: 'https://pics.filmaffinity.com/Mulan-247098384-large.jpg',
+            releaseDate: '2022-01-17',
+          },
+          {
+            id: 2,
+            title: 'Mulan 2',
+            image: 'https://pics.filmaffinity.com/Mulan-247098384-large.jpg',
+            releaseDate: '2022-01-17',
+          },
+          {
+            id: 3,
+            title: 'La casa de Mickey Mouse',
+            releaseDate: '2022-01-17',
+            image: 'https://pics.filmaffinity.com/Mulan-247098384-large.jpg',
+          },
+        ]);
+
+        const res2 = await request(server).get('/movies?order=ASC');
+        expect(res2.statusCode).toBe(200);
+        expect(res2.body).toEqual(
+          [
+            {
+              id: 3,
+              title: 'La casa de Mickey Mouse',
+              image: 'https://pics.filmaffinity.com/Mulan-247098384-large.jpg',
+              releaseDate: '2022-01-17'
+            },
+            {
+              id: 2,
+              title: 'Mulan 2',
+              image: 'https://pics.filmaffinity.com/Mulan-247098384-large.jpg',
+              releaseDate: '2022-01-17'
+            },
+            {
+              id: 1,
+              title: 'Mulan',
+              image: 'https://pics.filmaffinity.com/Mulan-247098384-large.jpg',
+              releaseDate: '2022-01-17'
+            }
+          ]);
+      })
     });
     describe('DELETE', () => {
       it('should return 400 if the id was not sent', async () => {
