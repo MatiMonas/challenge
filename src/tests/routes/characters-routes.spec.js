@@ -65,7 +65,7 @@ describe('Characters Routes', () => {
         .set({ Authorization: `Bearer ${token}` });
 
       expect(res.statusCode).toBe(400);
-      expect(res.text).toBe('Missing required parameters');
+      expect(res.body).toEqual({message:'Missing required parameters'});
     });
 
     it('should return status 400 and corresponding message if age or weight are not a number', async () => {

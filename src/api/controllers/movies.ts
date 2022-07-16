@@ -41,7 +41,7 @@ export async function movieGetController(
       const movies = await Movie.findAll(querySearch);
 
       if (!movies.length) {
-        return res.status(404).send({
+        return res.status(404).json({
           message: 'movie/s not found',
         });
       }
@@ -49,7 +49,7 @@ export async function movieGetController(
     }
 
     if (isNaN(parsedId)) {
-      return res.status(400).send({
+      return res.status(400).json({
         message: 'id must be a number',
       });
     }
@@ -91,7 +91,7 @@ export async function movieCreatorController(
     genreId = Number(req.body.genreId);
 
     if (!title || !releaseDate) {
-      return res.status(400).send({
+      return res.status(400).json({
         message: 'missing required parameters',
       });
     }
@@ -108,12 +108,20 @@ export async function movieCreatorController(
     });
 
     if (!created) {
-      return res.status(409).send({
+      return res.status(409).json({
         message: 'movie already exists',
       });
     }
 
-    await movie.setGenre(genreId);
+    let genre = await db.Genre.findByPk(genreId);
+
+    if(!genre) {
+      return res.status(404).json({
+        message: 'genre not found',
+      });
+    }
+
+    await movie.setGenre(genre);
 
     return res.status(201).json({ message: 'movie created' });
   } catch (err) {
@@ -135,7 +143,7 @@ export async function deleteMovieController(
     parsedId = Number(id);
 
     if (isNaN(parsedId)) {
-      return res.status(400).send({
+      return res.status(400).json({
         message: 'id is required and must be an integer number',
       });
     }
@@ -143,7 +151,7 @@ export async function deleteMovieController(
     const movie = await Movie.findByPk(parsedId);
 
     if (!movie) {
-      return res.status(404).send({
+      return res.status(404).json({
         message: 'movie not found',
       });
     }
@@ -176,7 +184,7 @@ export async function patchMovieController(
     image = req.body.image;
 
     if (isNaN(parsedId)) {
-      return res.status(400).send({
+      return res.status(400).json({
         message: 'id is required and it must be an integer number',
       });
     }
@@ -186,7 +194,7 @@ export async function patchMovieController(
     }
 
     if (isNaN(parsedRating)) {
-      return res.status(400).send({
+      return res.status(400).json({
         message: 'rating must be an integer number',
       });
     }
@@ -194,7 +202,7 @@ export async function patchMovieController(
     const movie = await Movie.findByPk(parsedId);
 
     if (!movie) {
-      return res.status(404).send({
+      return res.status(404).json({
         message: 'movie not found',
       });
     }

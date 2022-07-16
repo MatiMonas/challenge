@@ -64,7 +64,7 @@ export async function getCharactersController(
       const characters = await Character.findAll(querySearch);
 
       if (!characters.length) {
-        return res.status(404).send({
+        return res.status(404).json({
           message: 'character/s not found',
         });
       }
@@ -74,7 +74,7 @@ export async function getCharactersController(
     }
 
     if (isNaN(parsedId)) {
-      return res.status(400).send({
+      return res.status(400).json({
         message: 'id must be a number',
       });
     }
@@ -122,7 +122,7 @@ export async function createCharacterController(
     );
 
     if (!name || !(arrOfMoviesIds && arrOfMoviesIds[0])) {
-      return res.status(400).send('Missing required parameters');
+      return res.status(400).json({message:'Missing required parameters'});
     }
 
     if (isNaN(age) || isNaN(weight)) {
