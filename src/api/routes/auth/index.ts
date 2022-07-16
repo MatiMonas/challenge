@@ -4,7 +4,7 @@ import { authLoginController, authRegisterController } from '../../controllers/a
 const router = Router()
   /**
    * @openapi
-   * /auth/register:
+   * /register:
    *   post:
    *     summary: Creates a new user
    *     tags:
@@ -35,7 +35,7 @@ const router = Router()
    .post('/register', authRegisterController)
   /**
    * @openapi
-   * /auth/login:
+   * /login:
    *   post:
    *     summary: Login for the user
    *     tags:
