@@ -10,6 +10,8 @@ const router = Router()
    * tags:
    *   - name: Test Routes
    *     description: Testing routes to check that everything works fine.
+   *   - name: Auth Routes
+   *     description: Auth routes to register and login.
    *   - name: Character Routes
    *     description: Routes to manage characters, CRUD
    *   - name: Movies Routes
